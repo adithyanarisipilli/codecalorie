@@ -24,7 +24,18 @@ export const signup = async (req, res, next) => {
     email,
     password: hashedPassword,
   });
-
+ let user= await User.findOne({
+  email
+ })
+ if(user){
+  next(errorHandler(400, 'user already exists better use different email or username'));
+ }
+  user= await User.findOne({
+  username
+ })
+ if(user){
+  next(errorHandler(400, 'user already exists better use different email or username'));
+ }
   try {
     await newUser.save();
     res.json('Signup successful');
