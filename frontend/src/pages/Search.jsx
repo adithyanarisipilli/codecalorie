@@ -1,6 +1,7 @@
 import { Button, Select, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import PostCard from "../components/PostCard";
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -15,6 +16,7 @@ export default function Search() {
   const [showMore, setShowMore] = useState(false);
 
   const location = useLocation();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,33 +41,62 @@ export default function Search() {
         setLoading(false);
         return;
       }
-      const data = await res.json();
-      setPosts(data.posts);
-      setLoading(false);
-      setShowMore(data.posts.length === 9);
+      if (res.ok) {
+        const data = await res.json();
+        setPosts(data.posts);
+        setLoading(false);
+        if (data.posts.length === 9) {
+          setShowMore(true);
+        } else {
+          setShowMore(false);
+        }
+      }
     };
     fetchPosts();
   }, [location.search]);
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setSidebarData({ ...sidebarData, [id]: value });
+    if (e.target.id === "searchTerm") {
+      setSidebarData({ ...sidebarData, searchTerm: e.target.value });
+    }
+    if (e.target.id === "sort") {
+      const order = e.target.value || "desc";
+      setSidebarData({ ...sidebarData, sort: order });
+    }
+    if (e.target.id === "category") {
+      const category = e.target.value || "uncategorized";
+      setSidebarData({ ...sidebarData, category });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const urlParams = new URLSearchParams(sidebarData);
-    navigate(`/search?${urlParams.toString()}`);
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("searchTerm", sidebarData.searchTerm);
+    urlParams.set("sort", sidebarData.sort);
+    urlParams.set("category", sidebarData.category);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
   };
 
   const handleShowMore = async () => {
-    const startIndex = posts.length;
-    const urlParams = new URLSearchParams({ ...sidebarData, startIndex });
-    const res = await fetch(`/backend/post/getposts?${urlParams.toString()}`);
+    const numberOfPosts = posts.length;
+    const startIndex = numberOfPosts;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/backend/post/getposts?${searchQuery}`);
+    if (!res.ok) {
+      return;
+    }
     if (res.ok) {
       const data = await res.json();
       setPosts([...posts, ...data.posts]);
-      setShowMore(data.posts.length === 9);
+      if (data.posts.length === 9) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
     }
   };
 
@@ -73,7 +104,7 @@ export default function Search() {
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b md:border-r md:min-h-screen border-gray-500">
         <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
-          <div className="flex items-center gap-2">
+          <div className="flex   items-center gap-2">
             <label className="whitespace-nowrap font-semibold">
               Search Term:
             </label>
@@ -111,25 +142,17 @@ export default function Search() {
         </form>
       </div>
       <div className="w-full">
-        <h1 className="text-3xl font-semibold sm:border-b border-gray-500 p-3 mt-5">
+        <h1 className="text-3xl font-semibold sm:border-b border-gray-500 p-3 mt-5 ">
           Posts results:
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
-          {loading && <p className="text-xl text-gray-500">Loading...</p>}
           {!loading && posts.length === 0 && (
             <p className="text-xl text-gray-500">No posts found.</p>
           )}
+          {loading && <p className="text-xl text-gray-500">Loading...</p>}
           {!loading &&
-            posts.map((post) => (
-              <div key={post._id} className="w-full md:w-1/2 lg:w-1/3 p-4">
-                <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                  <h3 className="text-xl font-bold">{post.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {post.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+            posts &&
+            posts.map((post) => <PostCard key={post._id} post={post} />)}
           {showMore && (
             <button
               onClick={handleShowMore}
