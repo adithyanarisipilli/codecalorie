@@ -252,6 +252,7 @@ export default function DashProfile() {
             </Button>
           </Link>
         )}
+        
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
