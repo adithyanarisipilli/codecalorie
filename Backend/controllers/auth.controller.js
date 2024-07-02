@@ -122,3 +122,4 @@ const token = jwt.sign(
     next(error);
   }
 };
+

@@ -104,6 +104,12 @@ const CreateProblem = () => {
     }
   };
 
+  // Function to handle dynamic resizing of textareas
+  const handleTextareaChange = (e) => {
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
@@ -126,61 +132,71 @@ const CreateProblem = () => {
           onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
         />
 
-        <TextInput
-          type="text"
+        <textarea
           placeholder="Description"
           required
           id="description"
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
+          className="resize-y min-h-24 p-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, description: e.target.value });
+            handleTextareaChange(e);
+          }}
         />
 
-        <TextInput
-          type="text"
+        <textarea
           placeholder="Input"
           required
           id="input"
-          onChange={(e) => setFormData({ ...formData, input: e.target.value })}
+          className="resize-y min-h-24 p-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, input: e.target.value });
+            handleTextareaChange(e);
+          }}
         />
 
-        <TextInput
-          type="text"
+        <textarea
           placeholder="Constraints"
           required
           id="constraints"
-          onChange={(e) =>
-            setFormData({ ...formData, constraints: e.target.value })
-          }
+          className="resize-y min-h-24 p-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, constraints: e.target.value });
+            handleTextareaChange(e);
+          }}
         />
 
-        <TextInput
-          type="text"
+        <textarea
           placeholder="Output"
           required
           id="output"
-          onChange={(e) => setFormData({ ...formData, output: e.target.value })}
+          className="resize-y min-h-24 p-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, output: e.target.value });
+            handleTextareaChange(e);
+          }}
         />
 
         {testCases.map((testCase, index) => (
           <div key={index} className="flex gap-4 items-center">
-            <TextInput
-              type="text"
+            <textarea
               placeholder="Solved_Tc_input"
               required
               value={testCase.input}
-              onChange={(e) =>
-                handleTestCaseChange(index, "input", e.target.value)
-              }
+              className="resize-y min-h-24 p-2 border rounded-md flex-1"
+              onChange={(e) => {
+                handleTestCaseChange(index, "input", e.target.value);
+                handleTextareaChange(e);
+              }}
             />
-            <TextInput
-              type="text"
+            <textarea
               placeholder="Solved_Tc_output"
               required
               value={testCase.output}
-              onChange={(e) =>
-                handleTestCaseChange(index, "output", e.target.value)
-              }
+              className="resize-y min-h-24 p-2 border rounded-md flex-1"
+              onChange={(e) => {
+                handleTestCaseChange(index, "output", e.target.value);
+                handleTextareaChange(e);
+              }}
             />
             <Button onClick={() => handleDeleteTestCase(index)}>Delete</Button>
           </div>
@@ -189,30 +205,32 @@ const CreateProblem = () => {
           Add Test Case
         </Button>
 
-        <FileInput
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
-        <Button
-          type="button"
-          gradientDuoTone="purpleToBlue"
-          size="sm"
-          outline
-          onClick={handleUploadImage}
-          disabled={imageUploadProgress}
-        >
-          {imageUploadProgress ? (
-            <div className="w-16 h-16">
-              <CircularProgressbar
-                value={imageUploadProgress}
-                text={`${imageUploadProgress || 0}%`}
-              />
-            </div>
-          ) : (
-            "Upload Image"
-          )}
-        </Button>
+        <div className="flex gap-4 items-center">
+          <FileInput
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+          <Button
+            type="button"
+            gradientDuoTone="purpleToBlue"
+            size="sm"
+            outline
+            onClick={handleUploadImage}
+            disabled={imageUploadProgress}
+          >
+            {imageUploadProgress ? (
+              <div className="w-16 h-16">
+                <CircularProgressbar
+                  value={imageUploadProgress}
+                  text={`${imageUploadProgress || 0}%`}
+                />
+              </div>
+            ) : (
+              "Upload Image"
+            )}
+          </Button>
+        </div>
         {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
         {formData.image && (
           <img

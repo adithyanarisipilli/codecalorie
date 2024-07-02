@@ -5,6 +5,7 @@ import {
   HiDocumentText,
   HiOutlineUserGroup,
   HiAnnotation,
+  HiPuzzle,
   HiChartPie,
 } from "react-icons/hi";
 import { useEffect, useState } from "react";
@@ -18,6 +19,7 @@ export default function DashSidebar() {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const [tab, setTab] = useState("");
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
@@ -25,6 +27,7 @@ export default function DashSidebar() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+
   const handleSignout = async () => {
     try {
       const res = await fetch("/backend/user/signout", {
@@ -40,6 +43,7 @@ export default function DashSidebar() {
       console.log(error.message);
     }
   };
+
   return (
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
@@ -74,6 +78,17 @@ export default function DashSidebar() {
                 as="div"
               >
                 Posts
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser.isAdmin && (
+            <Link to="/dashboard?tab=problems">
+              <Sidebar.Item
+                active={tab === "problems"}
+                icon={HiPuzzle} 
+                as="div"
+              >
+                Problems
               </Sidebar.Item>
             </Link>
           )}

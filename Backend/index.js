@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 import postRoutes from './routes/post.route.js';
+import problemRoutes from './routes/problem.route.js';
 import commentRoutes from './routes/comment.route.js';
 import cookieParser from 'cookie-parser';
 
@@ -30,6 +31,7 @@ app.listen(3000, () => {
 app.use('/backend/user', userRoutes);
 app.use('/backend/auth', authRoutes);
 app.use('/backend/post', postRoutes);
+app.use('/backend/problem', problemRoutes);
 app.use('/backend/comment', commentRoutes);
 
 app.use((err, req, res, next) => {

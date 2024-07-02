@@ -13,9 +13,11 @@ import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import CreatePost from "./pages/CreatePost";
 import CreateProblem from "./pages/CreateProblem";
 import UpdatePost from "./pages/UpdatePost";
+import UpdateProblem from "./pages/UpdateProblem";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
+import DashProblems from "./components/DashProblems";
 
 export default function App() {
   return (
@@ -38,6 +40,10 @@ export default function App() {
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/create-problem" element={<CreateProblem />} />
           <Route path="/update-post/:postId" element={<UpdatePost />} />
+          <Route
+            path="/update-problem/:problemId"
+            element={<UpdateProblem />}
+          />
         </Route>
       </Routes>
       <Footer />
