@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 
-const problemSchema = new mongoose.Schema({
-  title: { type: String, required: true },
+const problemSchema = new mongoose.Schema(
+  {
+     userId: {
+      type: String,
+      required: true,
+    },
+  title: { type: String, required: true,unique: true, },
   rating: { type: Number, required: true },
   description: { type: String, required: true },
   testCases: [
@@ -10,12 +15,22 @@ const problemSchema = new mongoose.Schema({
       output: { type: String, required: true }
     }
   ],
+  input: { type: String, required: true },
   constraints: { type: String, required: true },
-  image: { type: String ,      default: 'https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png', // Replace with a default image URL if needed
+  output: { type: String, required: true },
+  image: { 
+    type: String ,   
+       default: 'https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png', 
 },
-  slug: { type: String, required: true, unique: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-}, { timestamps: true });
+
+  slug: { 
+    type: String,
+     required: true,
+      unique: true
+     },
+}, 
+  { timestamps: true }
+);
 
 const Problem = mongoose.model('Problem', problemSchema);
 

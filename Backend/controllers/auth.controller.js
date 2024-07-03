@@ -4,6 +4,7 @@ import { errorHandler } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
+  //used destructuring here in one line (new addition)
   const { username, email, password } = req.body;
 
   if (

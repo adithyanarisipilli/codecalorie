@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
+import React, { useEffect, useState } from "react";
+import { Alert, Button, FileInput, TextInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import {
   getDownloadURL,
   getStorage,
@@ -13,31 +9,26 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const UpdateProblem = () => {
+export default function UpdateProblem() {
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     rating: "",
     description: "",
     input: "",
-    output: "",
     constraints: "",
-    testCases: [],
-  });
-  const [initialFormData, setInitialFormData] = useState({
-    title: "",
-    rating: "",
-    description: "",
-    input: "",
     output: "",
-    constraints: "",
+    image: "",
     testCases: [],
   });
   const [publishError, setPublishError] = useState(null);
-  const [file, setFile] = useState(null);
-  const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setImageUploadError] = useState(null);
-
   const { problemId } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
@@ -50,32 +41,24 @@ const UpdateProblem = () => {
         );
         const data = await res.json();
         if (!res.ok) {
+          console.log(data.message);
           setPublishError(data.message);
           return;
         }
         setPublishError(null);
-        const problemData = data.problems[0];
+        const problem = data.problems[0];
         setFormData({
-          title: problemData.title || "",
-          rating: problemData.rating || "",
-          description: problemData.description || "",
-          input: problemData.input || "",
-          output: problemData.output || "",
-          constraints: problemData.constraints || "",
-          testCases: problemData.testCases || [],
-        });
-        setInitialFormData({
-          title: problemData.title || "",
-          rating: problemData.rating || "",
-          description: problemData.description || "",
-          input: problemData.input || "",
-          output: problemData.output || "",
-          constraints: problemData.constraints || "",
-          testCases: problemData.testCases || [],
+          title: problem.title,
+          rating: problem.rating,
+          description: problem.description,
+          input: problem.input,
+          constraints: problem.constraints,
+          output: problem.output,
+          image: problem.image,
+          testCases: problem.testCases || [],
         });
       } catch (error) {
-        console.error("Error fetching problem:", error);
-        setPublishError("Failed to fetch problem");
+        console.log(error.message);
       }
     };
 
@@ -115,7 +98,7 @@ const UpdateProblem = () => {
     } catch (error) {
       setImageUploadError("Image upload failed");
       setImageUploadProgress(null);
-      console.error("Image upload error:", error);
+      console.log(error);
     }
   };
 
@@ -140,13 +123,8 @@ const UpdateProblem = () => {
       setPublishError(null);
       navigate(`/problem/${data.slug}`);
     } catch (error) {
-      console.error("Error updating problem:", error);
       setPublishError("Something went wrong");
     }
-  };
-
-  const handleTextareaChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
   };
 
   const handleAddTestCase = () => {
@@ -167,101 +145,116 @@ const UpdateProblem = () => {
     setFormData({ ...formData, testCases: newTestCases });
   };
 
+  const handleTextareaChange = (e) => {
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
-        Update Problem
+        Update problem
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-4 sm:flex-row justify-between">
-          <TextInput
-            type="text"
-            placeholder="Title"
-            required
-            id="title"
-            className="flex-1"
-            value={formData.title}
-            onChange={(e) => handleTextareaChange("title", e.target.value)}
-          />
-          <Select
-            value={formData.category || ""}
-            onChange={(e) => handleTextareaChange("category", e.target.value)}
-          >
-            <option value="">Select a category</option>
-            <option value="algorithm">Algorithm</option>
-            <option value="datastructures">Data Structures</option>
-            <option value="coding">Coding</option>
-          </Select>
-        </div>
-        <ReactQuill
-          theme="snow"
-          value={formData.description}
-          placeholder="Problem description..."
-          className="h-72 mb-12"
+        <div className="flex flex-col gap-4 sm:flex-row justify-between"></div>
+        <TextInput
+          type="text"
+          placeholder="Title"
           required
-          onChange={(value) => handleTextareaChange("description", value)}
+          id="title"
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          value={formData.title}
         />
+
         <TextInput
           type="text"
           placeholder="Rating"
           required
           id="rating"
+          onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
           value={formData.rating}
-          onChange={(e) => handleTextareaChange("rating", e.target.value)}
         />
+
+        <textarea
+          placeholder="Description"
+          required
+          id="description"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          onChange={(e) => {
+            setFormData({ ...formData, description: e.target.value });
+            handleTextareaChange(e);
+          }}
+          value={formData.description}
+        />
+
         <textarea
           placeholder="Input"
           required
           id="input"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          onChange={(e) => {
+            setFormData({ ...formData, input: e.target.value });
+            handleTextareaChange(e);
+          }}
           value={formData.input}
-          onChange={(e) => handleTextareaChange("input", e.target.value)}
         />
 
         <textarea
           placeholder="Constraints"
           required
           id="constraints"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          onChange={(e) => {
+            setFormData({ ...formData, constraints: e.target.value });
+            handleTextareaChange(e);
+          }}
           value={formData.constraints}
-          onChange={(e) => handleTextareaChange("constraints", e.target.value)}
         />
 
         <textarea
           placeholder="Output"
           required
           id="output"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          onChange={(e) => {
+            setFormData({ ...formData, output: e.target.value });
+            handleTextareaChange(e);
+          }}
           value={formData.output}
-          onChange={(e) => handleTextareaChange("output", e.target.value)}
         />
+
         {formData.testCases.map((testCase, index) => (
           <div key={index} className="flex gap-4 items-center">
             <textarea
               placeholder="Solved_Tc_input"
               required
               value={testCase.input}
-              className="resize-y min-h-24 p-2 border rounded-md flex-1"
-              onChange={(e) =>
-                handleTestCaseChange(index, "input", e.target.value)
-              }
+              className="resize-y min-h-24 p-2 border rounded-md flex-1 text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+              onChange={(e) => {
+                handleTestCaseChange(index, "input", e.target.value);
+                handleTextareaChange(e);
+              }}
             />
             <textarea
               placeholder="Solved_Tc_output"
               required
               value={testCase.output}
-              className="resize-y min-h-24 p-2 border rounded-md flex-1"
-              onChange={(e) =>
-                handleTestCaseChange(index, "output", e.target.value)
-              }
+              className="resize-y min-h-24 p-2 border rounded-md flex-1 text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+              onChange={(e) => {
+                handleTestCaseChange(index, "output", e.target.value);
+                handleTextareaChange(e);
+              }}
             />
-            <Button onClick={() => handleDeleteTestCase(index)}>Delete</Button>
+            <Button type="button" onClick={() => handleDeleteTestCase(index)}>
+              Delete
+            </Button>
           </div>
         ))}
         <Button type="button" onClick={handleAddTestCase}>
           Add Test Case
         </Button>
-        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+
+        <div className="flex gap-4 items-center">
           <FileInput
             type="file"
             accept="image/*"
@@ -273,7 +266,7 @@ const UpdateProblem = () => {
             size="sm"
             outline
             onClick={handleUploadImage}
-            disabled={imageUploadProgress}
+            disabled={!!imageUploadProgress}
           >
             {imageUploadProgress ? (
               <div className="w-16 h-16">
@@ -296,7 +289,7 @@ const UpdateProblem = () => {
           />
         )}
         <Button type="submit" gradientDuoTone="purpleToPink">
-          Update Problem
+          Update problem
         </Button>
         {publishError && (
           <Alert className="mt-5" color="failure">
@@ -306,6 +299,4 @@ const UpdateProblem = () => {
       </form>
     </div>
   );
-};
-
-export default UpdateProblem;
+}

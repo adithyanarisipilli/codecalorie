@@ -116,6 +116,7 @@ const CreateProblem = () => {
         Create a Problem
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-4 sm:flex-row justify-between"></div>
         <TextInput
           type="text"
           placeholder="Title"
@@ -136,7 +137,7 @@ const CreateProblem = () => {
           placeholder="Description"
           required
           id="description"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
           onChange={(e) => {
             setFormData({ ...formData, description: e.target.value });
             handleTextareaChange(e);
@@ -147,7 +148,7 @@ const CreateProblem = () => {
           placeholder="Input"
           required
           id="input"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
           onChange={(e) => {
             setFormData({ ...formData, input: e.target.value });
             handleTextareaChange(e);
@@ -158,7 +159,7 @@ const CreateProblem = () => {
           placeholder="Constraints"
           required
           id="constraints"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
           onChange={(e) => {
             setFormData({ ...formData, constraints: e.target.value });
             handleTextareaChange(e);
@@ -169,7 +170,7 @@ const CreateProblem = () => {
           placeholder="Output"
           required
           id="output"
-          className="resize-y min-h-24 p-2 border rounded-md"
+          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
           onChange={(e) => {
             setFormData({ ...formData, output: e.target.value });
             handleTextareaChange(e);
@@ -182,7 +183,7 @@ const CreateProblem = () => {
               placeholder="Solved_Tc_input"
               required
               value={testCase.input}
-              className="resize-y min-h-24 p-2 border rounded-md flex-1"
+              className="resize-y min-h-24 p-2 border rounded-md flex-1 text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
               onChange={(e) => {
                 handleTestCaseChange(index, "input", e.target.value);
                 handleTextareaChange(e);
@@ -192,7 +193,7 @@ const CreateProblem = () => {
               placeholder="Solved_Tc_output"
               required
               value={testCase.output}
-              className="resize-y min-h-24 p-2 border rounded-md flex-1"
+              className="resize-y min-h-24 p-2 border rounded-md flex-1 text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
               onChange={(e) => {
                 handleTestCaseChange(index, "output", e.target.value);
                 handleTextareaChange(e);

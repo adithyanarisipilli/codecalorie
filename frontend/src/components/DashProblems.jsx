@@ -82,7 +82,6 @@ export default function DashProblems() {
               <Table.HeadCell>Date updated</Table.HeadCell>
               <Table.HeadCell>Problem title</Table.HeadCell>
               <Table.HeadCell>Rating</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>
                 <span>Edit</span>
@@ -101,7 +100,6 @@ export default function DashProblems() {
                     <Link to={`/problem/${problem.slug}`}>{problem.title}</Link>
                   </Table.Cell>
                   <Table.Cell>{problem.rating}</Table.Cell>
-                  <Table.Cell>{problem.category}</Table.Cell>
                   <Table.Cell>
                     <span
                       onClick={() => {

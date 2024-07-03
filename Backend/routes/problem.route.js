@@ -1,12 +1,12 @@
 import express from 'express';
 import { verifyToken } from '../utils/verifyUser.js';
-import { createProblem, deleteProblem, getProblems, updateProblem } from '../controllers/problem.controller.js';
+import { create, deleteproblem, getproblems, updateproblem } from '../controllers/problem.controller.js';
 
 const router = express.Router();
 
-router.post('/create', verifyToken, createProblem);
-router.get('/getproblems', getProblems);
-router.delete('/deleteproblem/:problemId/:userId', verifyToken, deleteProblem);
-router.put('/updateproblem/:problemId/:userId', verifyToken, updateProblem);
+router.post('/create', verifyToken, create);
+router.get('/getproblems', getproblems);
+router.delete('/deleteproblem/:problemId/:userId', verifyToken, deleteproblem);
+router.put('/updateproblem/:problemId/:userId', verifyToken, updateproblem);
 
 export default router;

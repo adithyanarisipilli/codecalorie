@@ -1,8 +1,8 @@
 import Problem from '../models/problem.model.js';
 import { errorHandler } from '../utils/error.js';
 
-export const createProblem = async (req, res, next) => {
-  try {
+export const create = async (req, res, next) => {
+  
     if (!req.user.isAdmin) {
       return next(errorHandler(403, 'You are not allowed to create a problem'));
     }
@@ -23,23 +23,18 @@ export const createProblem = async (req, res, next) => {
       }
     }
   
-    const slug = title
+    const slug = req.body.title
       .split(' ')
       .join('-')
       .toLowerCase()
       .replace(/[^a-zA-Z0-9-]/g, '');
   
     const newProblem = new Problem({
-      title,
-      rating,
-      description,
-      testCases,
-      constraints,
-      image,
+      ...req.body,
       slug,
       userId: req.user.id,
     });
-  
+  try {
     const savedProblem = await newProblem.save();
     res.status(201).json(savedProblem);
   } catch (error) {
@@ -47,14 +42,13 @@ export const createProblem = async (req, res, next) => {
   }
 };
 
-export const getProblems = async (req, res, next) => {
+export const getproblems = async (req, res, next) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
     const sortDirection = req.query.order === 'asc' ? 1 : -1;
     const problemsQuery = {
       ...(req.query.userId && { userId: req.query.userId }),
-      ...(req.query.category && { category: req.query.category }),
       ...(req.query.slug && { slug: req.query.slug }), // Assuming 'slug' for problems
       ...(req.query.problemId && { _id: req.query.problemId }),
       ...(req.query.searchTerm && {
@@ -81,30 +75,57 @@ export const getProblems = async (req, res, next) => {
   }
 };
 
-export const deleteProblem = async (req, res, next) => {
+
+export const deleteproblem = async (req, res, next) => {
+  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    return next(errorHandler(403, 'You are not allowed to delete this problem'));
+  }
   try {
-    const { problemId } = req.params; // Assuming the route parameter is named problemId
-  
-    const problem = await Problem.findOneAndDelete({ _id: problemId, userId: req.user.id });
-    if (!problem) {
-      return next(errorHandler(404, 'Problem not found'));
-    }
-    res.json({ message: 'Problem deleted' });
+    await Problem.findByIdAndDelete(req.params.problemId);
+    res.status(200).json('The problem has been deleted');
   } catch (error) {
     next(error);
   }
 };
 
-export const updateProblem = async (req, res, next) => {
-  try {
-    const { problemId } = req.body; // Assuming the route parameter is named problemId
-    const updates = req.body;
+// export const updateproblem = async (req, res, next) => {
+//   try {
+//     const { problemId } = req.body; 
+//     const updates = req.body;
   
-    const updatedProblem = await Problem.findOneAndUpdate({ _id: problemId, userId: req.user.id }, updates, { new: true });
-    if (!updatedProblem) {
-      return next(errorHandler(404, 'Problem not found'));
-    }
-    res.json(updatedProblem);
+//     const updatedProblem = await Problem.findOneAndUpdate({ _id: problemId, userId: req.user.id }, updates, { new: true });
+//     if (!updatedProblem) {
+//       return next(errorHandler(404, 'Problem not found'));
+//     }
+//     res.json(updatedProblem);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+export const updateproblem = async (req, res, next) => {
+  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    return next(errorHandler(403, 'You are not allowed to update this problem'));
+  }
+  try {
+    const updatedProblem = await Problem.findByIdAndUpdate(
+      req.params.problemId,
+      {
+        $set: {
+          title: req.body.title,
+          rating: req.body.rating,
+          description: req.body.description,
+          title: req.body.title,
+          input: req.body.input,
+          constraints:req.body.constraints,
+          output: req.body.output,
+          image: req.body.image,
+          testCases: req.body.testCases
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedProblem);
   } catch (error) {
     next(error);
   }

@@ -265,7 +265,7 @@ export default function DashProfile() {
           </Link>
         )}
 
-        {currentUser.isAdmin && (
+        {/* {currentUser.isAdmin && (
           <Link to={"/create-contest"}>
             <Button
               type="button"
@@ -275,7 +275,7 @@ export default function DashProfile() {
               Create a contest
             </Button>
           </Link>
-        )}
+        )} */}
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
