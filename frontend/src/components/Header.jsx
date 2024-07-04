@@ -9,44 +9,44 @@ import { useEffect, useState } from "react";
 
 export default function Header() {
   const path = useLocation().pathname;
-    const location = useLocation();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
-   const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-   useEffect(() => {
-     const urlParams = new URLSearchParams(location.search);
-     const searchTermFromUrl = urlParams.get("searchTerm");
-     if (searchTermFromUrl) {
-       setSearchTerm(searchTermFromUrl);
-     }
-   }, [location.search]);
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
 
-    const handleSignout = async () => {
-      try {
-        const res = await fetch("/backend/user/signout", {
-          method: "POST",
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          console.log(data.message);
-        } else {
-          dispatch(signoutSuccess());
-        }
-      } catch (error) {
-        console.log(error.message);
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/backend/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
       }
-    };
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const urlParams = new URLSearchParams(location.search);
-        urlParams.set("searchTerm", searchTerm);
-        const searchQuery = urlParams.toString();
-        navigate(`/search?${searchQuery}`);
-      };
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
 
   return (
     <Navbar className="border-b-2">
@@ -116,8 +116,8 @@ export default function Header() {
         <Navbar.Link active={path === "/contests"} as={"div"}>
           <Link to="/contests">Contests</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === "/problems"} as={"div"}>
-          <Link to="/problems">Problems</Link>
+        <Navbar.Link active={path === "/search-problems"} as={"div"}>
+          <Link to="/search-problems">Problems</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>

@@ -17,6 +17,7 @@ import UpdateProblem from "./pages/UpdateProblem";
 import PostPage from "./pages/PostPage";
 import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
+import SearchProblem from "./pages/SearchProblem";
 import DashProblems from "./components/DashProblems";
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/problems" element={<Problems />} />
         <Route path="/contests" element={<Contests />} />
         <Route path="/post/:postSlug" element={<PostPage />} />
+        <Route path="/search-problems" element={<SearchProblem />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>

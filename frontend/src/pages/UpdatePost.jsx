@@ -21,11 +21,13 @@ export default function UpdatePost() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const { postId } = useParams();
-
+  console.log("postId:", postId);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
+    console.log("Navigated to:", window.location.href);
+    console.log("postId:", postId);
     try {
       const fetchPost = async () => {
         const res = await fetch(`/backend/post/getposts?postId=${postId}`);
@@ -45,7 +47,7 @@ export default function UpdatePost() {
     } catch (error) {
       console.log(error.message);
     }
-  }, [postId]);
+  }, [postId, navigate]);
 
   const handleUpdloadImage = async () => {
     try {
@@ -87,7 +89,7 @@ export default function UpdatePost() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `/backend/post/updatepost/${formData._id}/${currentUser._id}`,
+        `/backend/post/updatepost/${postId}/${currentUser._id}`,
         {
           method: "PUT",
           headers: {

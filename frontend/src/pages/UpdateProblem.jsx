@@ -106,7 +106,7 @@ export default function UpdateProblem() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `/backend/problem/updateproblem/${formData._id}/${currentUser._id}`,
+        `/backend/problem/updateproblem/${problemId}/${currentUser._id}`,
         {
           method: "PUT",
           headers: {

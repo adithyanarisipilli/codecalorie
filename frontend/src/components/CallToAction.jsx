@@ -10,7 +10,7 @@ export default function CallToAction() {
         </p>
         <Button
           gradientDuoTone="purpleToPink"
-          className="rounded-tl-xl rounded-bl-none"
+          className="rounded-tl-xl rounded-bl-none mb-3"
         >
           <a
             href="https://www.linkedin.com/in/adithya-narisipilli-59a3b025a/"
@@ -21,10 +21,11 @@ export default function CallToAction() {
           </a>
         </Button>
       </div>
-      <div className="p-7 flex-1">
+      <div className="p-7 flex-1 flex justify-end">
         <img
-          src="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8QXhFi8JiCC2UAhqboXPnmUmVQCkOVUUFAr5LiGk0JQ&s"
           alt="Admin"
+          className="max-w-full h-auto object-contain rounded-tr-3xl rounded-br-3xl"
         />
       </div>
     </div>
