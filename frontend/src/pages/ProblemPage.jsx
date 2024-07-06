@@ -71,11 +71,11 @@ const ProblemPage = () => {
         <p className="mt-4">{problem.description}</p>
         <div className="mt-4">
           <h2 className="text-xl font-semibold">Input Format</h2>
-          <p>{problem.inputType}</p>
+          <p>{problem.input}</p>
         </div>
         <div className="mt-4">
           <h2 className="text-xl font-semibold">Output Format</h2>
-          <p>{problem.outputType}</p>
+          <p>{problem.output}</p>
         </div>
         <div className="mt-4">
           <h2 className="text-xl font-semibold">Constraints</h2>
