@@ -1,24 +1,23 @@
 import { Link } from "react-router-dom";
 
-export default function ProblemCard({ problem }) {
+const ProblemCard = ({ _id, title, rating, imageUrl }) => {
   return (
-    <div className="group relative w-full border border-teal-500 hover:border-2 h-[400px] overflow-hidden rounded-lg sm:w-[430px] transition-all">
-      <Link to={`/problem/${problem.slug}`}>
+    <div className="p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-800">
+      {imageUrl && (
         <img
-          src={problem.image}
-          alt="problem cover"
-          className="h-[260px] w-full  object-cover group-hover:h-[200px] transition-all duration-300 z-20"
+          src={imageUrl}
+          alt={title}
+          className="w-full h-48 object-cover rounded-lg mb-4"
         />
-      </Link>
-      <div className="p-3 flex flex-col gap-2">
-        <p className="text-lg font-semibold line-clamp-2">{problem.title}</p>
-        <Link
-          to={`/problem/${problem.slug}`}
-          className="z-10 group-hover:bottom-0 absolute bottom-[-200px] left-0 right-0 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white transition-all duration-300 text-center py-2 rounded-md !rounded-tl-none m-2"
-        >
-          Solve problem
-        </Link>
-      </div>
+      )}
+      <h2 className="text-lg font-bold text-black dark:text-white">
+        <Link to={`/problem/${_id}`}>{title}</Link>
+      </h2>
+      <p className="text-sm text-gray-600 dark:text-gray-300">
+        Rating: {rating}
+      </p>
     </div>
   );
-}
+};
+
+export default ProblemCard;

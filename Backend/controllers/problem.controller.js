@@ -75,6 +75,19 @@ export const getproblems = async (req, res, next) => {
   }
 };
 
+export const getProblemById = async (req, res) => {
+  try {
+    const { problemId } = req.params;
+    const problem = await Problem.findById(problemId);
+    if (!problem) {
+      return res.status(404).json({ error: "Problem not found" });
+    }
+    res.json(problem);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 export const deleteproblem = async (req, res, next) => {
   if (!req.user.isAdmin || req.user.id !== req.params.userId) {

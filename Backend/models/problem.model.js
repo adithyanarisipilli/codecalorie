@@ -2,11 +2,7 @@ import mongoose from 'mongoose';
 
 const problemSchema = new mongoose.Schema(
   {
-     problemId: {
-      type: String,
-      required: true,
-      unique:true
-    },
+     
   title: { type: String, required: true,unique: true, },
   rating: { type: Number, required: true },
   description: { type: String, required: true },

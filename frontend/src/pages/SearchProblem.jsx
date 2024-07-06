@@ -88,51 +88,48 @@ export default function SearchProblem() {
         <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
           <div className="flex items-center gap-2">
             <label className="whitespace-nowrap font-semibold">
-              Search Term:
+              Search Term
             </label>
             <TextInput
-              placeholder="Search..."
-              id="searchTerm"
               type="text"
+              placeholder="Search Term"
+              id="searchTerm"
               value={sidebarData.searchTerm}
               onChange={handleChange}
             />
           </div>
+
           <div className="flex items-center gap-2">
-            <label className="font-semibold">Sort:</label>
-            <Select onChange={handleChange} value={sidebarData.sort} id="sort">
-              <option value="desc">Latest</option>
+            <label className="whitespace-nowrap font-semibold">Sort By</label>
+            <Select id="sort" value={sidebarData.sort} onChange={handleChange}>
+              <option value="desc">Newest</option>
               <option value="asc">Oldest</option>
             </Select>
           </div>
-          <Button type="submit" outline gradientDuoTone="purpleToPink">
-            Apply Filters
-          </Button>
+
+          <Button type="submit">Apply</Button>
         </form>
       </div>
-      <div className="w-full">
-        <h1 className="text-3xl font-semibold sm:border-b border-gray-500 p-3 mt-5">
-          Problems results:
-        </h1>
-        <div className="p-7 flex flex-wrap gap-4">
-          {!loading && problems.length === 0 && (
-            <p className="text-xl text-gray-500">No problems found.</p>
-          )}
-          {loading && <p className="text-xl text-gray-500">Loading...</p>}
-          {!loading &&
-            problems &&
-            problems.map((problem) => (
-              <ProblemCard key={problem._id} problem={problem} />
-            ))}
-          {showMore && (
-            <button
-              onClick={handleShowMore}
-              className="text-teal-500 text-lg hover:underline p-7 w-full"
-            >
-              Show More
-            </button>
-          )}
-        </div>
+
+      <div className="p-5 flex-1">
+        {loading ? (
+          <div className="text-2xl font-bold">Loading...</div>
+        ) : problems.length ? (
+          <div>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {problems.map((problem) => (
+                <ProblemCard key={problem._id} {...problem} />
+              ))}
+            </div>
+            {showMore && (
+              <div className="flex justify-center mt-8">
+                <Button onClick={handleShowMore}>Show More</Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-2xl font-bold">No Problems Found!</div>
+        )}
       </div>
     </div>
   );

@@ -1,150 +1,184 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import AceEditor from "react-ace";
-import { Button, Spinner } from "flowbite-react";
 import "ace-builds/src-noconflict/mode-c_cpp";
 import "ace-builds/src-noconflict/theme-monokai";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const ProblemPage = () => {
   const { problemId } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [problem, setProblem] = useState(null);
-  const [code, setCode] = useState("// Write your C++ code here");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
+  const [customInput, setCustomInput] = useState("");
+  const [isConsoleVisible, setIsConsoleVisible] = useState(false);
 
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        setLoading(true);
-        const res = await fetch(
-          `/backend/problem/getproblems?problemId=${problemId}`
-        );
-        const data = await res.json();
-        if (!res.ok) {
-          setError(true);
-          setLoading(false);
-          return;
-        }
-        setProblem(data.problem);
-        setLoading(false);
+        const response = await axios.get(`/backend/problem/${problemId}`);
+        setProblem(response.data);
       } catch (error) {
-        setError(true);
+        setError("Failed to fetch problem");
+      } finally {
         setLoading(false);
       }
     };
+
     fetchProblem();
   }, [problemId]);
 
   const handleRun = async () => {
     try {
-      const res = await fetch("/backend/compiler/run", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
+      const response = await axios.post("/run", {
+        language: "cpp",
+        code,
+        input: customInput,
       });
-      const data = await res.json();
-      setOutput(data.output || "Error running the code");
-    } catch (error) {
+      setOutput(response.data.output);
+    } catch (err) {
+      console.error(err);
       setOutput("Error running the code");
     }
   };
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("/backend/compiler/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      });
-      const data = await res.json();
-      setOutput(data.verdict || "Error submitting the code");
-    } catch (error) {
+      const response = await axios.post("/submit", { language: "cpp", code });
+      console.log(response.data.output); // You can add logic here to validate the output with test cases
+      setOutput(response.data.output);
+    } catch (err) {
+      console.error(err);
       setOutput("Error submitting the code");
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Spinner size="xl" />
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error loading problem details.</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/2 p-3">
-          <h1 className="text-3xl mt-10 p-3 text-center font-serif lg:text-4xl">
-            {problem.title}
-          </h1>
-          <div className="mt-10 p-3">
-            <h3 className="font-bold">Description:</h3>
-            <p>{problem.description}</p>
-          </div>
-          <div className="mt-5 p-3">
-            <h3 className="font-bold">Rating:</h3>
-            <p>{problem.rating}</p>
-          </div>
-          <div className="mt-5 p-3">
-            <h3 className="font-bold">Input:</h3>
-            <p>{problem.input}</p>
-          </div>
-          <div className="mt-5 p-3">
-            <h3 className="font-bold">Constraints:</h3>
-            <p>{problem.constraints}</p>
-          </div>
-          <div className="mt-5 p-3">
-            <h3 className="font-bold">Output:</h3>
-            <p>{problem.output}</p>
-          </div>
-          <div className="mt-5 p-3">
-            <h3 className="font-bold">Test Cases:</h3>
-            <ul>
-              {problem.testCases.map((testCase, index) => (
-                <li key={index}>
-                  <strong>Input:</strong> {testCase.input} <br />
-                  <strong>Output:</strong> {testCase.output}
-                </li>
-              ))}
-            </ul>
-          </div>
+    <div className="flex flex-col md:flex-row p-4">
+      <div className="md:w-1/2">
+        <h1 className="text-2xl font-bold">{problem.title}</h1>
+        <p className="mt-4">{problem.description}</p>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Input Format</h2>
+          <p>{problem.inputType}</p>
         </div>
-        <div className="md:w-1/2 p-3">
-          <AceEditor
-            mode="c_cpp"
-            theme="monokai"
-            value={code}
-            onChange={setCode}
-            name="codeEditor"
-            editorProps={{ $blockScrolling: true }}
-            width="100%"
-            height="500px"
-          />
-          <div className="mt-3">
-            <Button color="success" onClick={handleRun}>
-              Run
-            </Button>
-            <Button color="blue" className="ml-2" onClick={handleSubmit}>
-              Submit
-            </Button>
-          </div>
-          <div className="mt-5 p-3 bg-gray-100">
-            <h3 className="font-bold">Output:</h3>
-            <pre>{output}</pre>
-          </div>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Output Format</h2>
+          <p>{problem.outputType}</p>
+        </div>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Constraints</h2>
+          <p>{problem.constraints}</p>
+        </div>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Rating</h2>
+          <p>{problem.rating}</p>
+        </div>
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold">Test Cases</h2>
+          {problem.testCases.map((testCase, index) => (
+            <div key={index} className="mt-4 border rounded p-4">
+              <div className="flex items-start mb-2">
+                <div className="flex-grow">
+                  <h3 className="text-lg font-semibold">
+                    Test Case {index + 1}
+                  </h3>
+                </div>
+                <CopyToClipboard text={testCase.input}>
+                  <button className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded inline-flex items-center">
+                    Copy Input
+                  </button>
+                </CopyToClipboard>
+              </div>
+              <p>
+                <strong>Input:</strong>
+              </p>
+              <div className="p-2 bg-black text-white rounded">
+                <p>{testCase.input}</p>
+              </div>
+              <div className="flex items-start mt-2">
+                <div className="flex-grow">
+                  <CopyToClipboard text={testCase.output}>
+                    <button className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded inline-flex items-center">
+                      Copy Output
+                    </button>
+                  </CopyToClipboard>
+                </div>
+              </div>
+              <p>
+                <strong>Output:</strong>
+              </p>
+              <div className="p-2 bg-black text-white rounded mt-2">
+                <p>{testCase.output}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </main>
+      <div className="md:w-1/2 mt-4 md:mt-0 md:ml-4">
+        <AceEditor
+          mode="c_cpp"
+          theme="monokai"
+          name="editor"
+          editorProps={{ $blockScrolling: true }}
+          value={code}
+          onChange={setCode}
+          fontSize={14}
+          width="100%"
+          height="400px"
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+          }}
+        />
+        <div className="flex mt-4">
+          <button
+            onClick={() => setIsConsoleVisible(!isConsoleVisible)}
+            className="mr-4 bg-gray-500 text-white py-2 px-4 rounded"
+          >
+            Console
+          </button>
+          <button
+            onClick={handleRun}
+            className="mr-4 bg-blue-500 text-white py-2 px-4 rounded"
+          >
+            Run
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-green-500 text-white py-2 px-4 rounded"
+          >
+            Submit
+          </button>
+        </div>
+        {isConsoleVisible && (
+          <div className="mt-4">
+            <textarea
+              className="w-full p-2 bg-gray-800 text-white border rounded"
+              placeholder="Enter custom input"
+              value={customInput}
+              onChange={(e) => setCustomInput(e.target.value)}
+              rows={5}
+            />
+            <div className="mt-4 p-2 bg-gray-800 text-white rounded">
+              <pre>{output}</pre>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

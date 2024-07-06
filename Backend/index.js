@@ -29,26 +29,39 @@ app.use(cors());
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
-
 app.get("/",(req,res)=>{
   res.json({online:"compiler"});
 });
 
-app.post("/run", async (req, res) => {
-    // const language = req.body.language;
-    // const code = req.body.code;
+app.post('/run', async (req, res) => {
+  const { language, code, input } = req.body;
+  const filepath = await generateFile('cpp', code);
+  try {
+    const output = await executeCpp(filepath, input);
+    res.json({ output });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 
-    const { language = 'cpp', code } = req.body;
-    if (code === undefined) {
-        return res.status(404).json({ success: false, error: "Empty code!" });
+app.post('/submit', async (req, res) => {
+  const { code, problemId } = req.body;
+  const filepath = await generateFile('cpp', code);
+  try {
+    const problem = await Problem.findById(problemId);
+    const testCases = problem.testCases;
+    let verdict = "Accepted";
+    for (const testCase of testCases) {
+      const output = await executeCpp(filepath, testCase.input);
+      if (output.trim() !== testCase.output.trim()) {
+        verdict = "Wrong Answer";
+        break;
+      }
     }
-    try {
-        const filePath = await generateFile(language, code);
-        const output = await executeCpp(filePath);
-        res.json({ filePath, output });
-    } catch (error) {
-        res.status(500).json({ error: error });
-    }
+    res.json({ verdict });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 });
 
 app.listen(3000, () => {
