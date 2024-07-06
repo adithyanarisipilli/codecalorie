@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser';
 import { generateFile } from './generateFile.cjs';
 import { executeCpp } from './executeCpp.cjs';
 import cors from 'cors';
-
+import compilerRoutes from './routes/compiler.cjs';
 dotenv.config();
 
 mongoose
@@ -60,6 +60,7 @@ app.use('/backend/auth', authRoutes);
 app.use('/backend/post', postRoutes);
 app.use('/backend/problem', problemRoutes);
 app.use('/backend/comment', commentRoutes);
+app.use('/backend/compiler', compilerRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

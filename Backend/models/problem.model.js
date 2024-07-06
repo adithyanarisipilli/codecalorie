@@ -2,9 +2,10 @@ import mongoose from 'mongoose';
 
 const problemSchema = new mongoose.Schema(
   {
-     userId: {
+     problemId: {
       type: String,
       required: true,
+      unique:true
     },
   title: { type: String, required: true,unique: true, },
   rating: { type: Number, required: true },

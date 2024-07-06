@@ -88,21 +88,6 @@ export const deleteproblem = async (req, res, next) => {
   }
 };
 
-// export const updateproblem = async (req, res, next) => {
-//   try {
-//     const { problemId } = req.body; 
-//     const updates = req.body;
-  
-//     const updatedProblem = await Problem.findOneAndUpdate({ _id: problemId, userId: req.user.id }, updates, { new: true });
-//     if (!updatedProblem) {
-//       return next(errorHandler(404, 'Problem not found'));
-//     }
-//     res.json(updatedProblem);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 export const updateproblem = async (req, res, next) => {
   if (!req.user.isAdmin || req.user.id !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to update this problem'));

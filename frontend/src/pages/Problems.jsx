@@ -42,7 +42,7 @@ const Problems = () => {
         <ul>
           {problems.map((problem) => (
             <li key={problem._id}>
-              <Link to={`/problem/${problem.slug}`}>
+              <Link to={`/problem/${problem._id}`}>
                 <h2>{problem.title}</h2>
                 <p>Rating: {problem.rating}</p>
               </Link>
