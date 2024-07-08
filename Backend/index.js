@@ -34,7 +34,7 @@ app.get("/",(req,res)=>{
 });
 
 app.post('/run', async (req, res) => {
-  const { language, code, input } = req.body;
+  const { language='cpp', code, input } = req.body;
   const filepath = await generateFile('cpp', code);
   try {
     const output = await executeCpp(filepath, input);
