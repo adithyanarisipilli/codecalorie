@@ -33,36 +33,57 @@ app.get("/",(req,res)=>{
   res.json({online:"compiler"});
 });
 
-app.post('/run', async (req, res) => {
-  const { language='cpp', code, input } = req.body;
-  const filepath = await generateFile('cpp', code);
-  try {
-    const output = await executeCpp(filepath, input);
-    res.json({ output });
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-});
+// app.post('/run', async (req, res) => {
+//   const { language='cpp', code, input } = req.body;
+//   const filepath = await generateFile('cpp', code);
+//   try {
+//     const output = await executeCpp(filepath, input);
+//     res.json({ output });
+//   } catch (error) {
+//     res.status(500).json({ error });
+//   }
+// });
+app.post("/run", async (req, res) => {
+    // const language = req.body.language;
+    // const code = req.body.code;
 
-app.post('/submit', async (req, res) => {
-  const { code, problemId } = req.body;
-  const filepath = await generateFile('cpp', code);
-  try {
-    const problem = await Problem.findById(problemId);
-    const testCases = problem.testCases;
-    let verdict = "Accepted";
-    for (const testCase of testCases) {
-      const output = await executeCpp(filepath, testCase.input);
-      if (output.trim() !== testCase.output.trim()) {
-        verdict = "Wrong Answer";
-        break;
-      }
+    const { language = 'cpp', code, input } = req.body;
+    if (code === undefined) {
+        return res.status(404).json({ success: false, error: "Empty code!" });
     }
-    res.json({ verdict });
-  } catch (error) {
-    res.status(500).json({ error });
-  }
+    try {
+        const filePath =  await generateFile(language, code);
+        const inputPath =  await generateInputFile(input);
+        const output = await executeCpp(filePath, inputPath);
+        
+// console.log(filePath);
+// console.log(output);
+// console.log(inputPath);
+
+        res.json({ filePath, inputPath, output });
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
 });
+// app.post('/submit', async (req, res) => {
+//   const { code, problemId } = req.body;
+//   const filepath = await generateFile('cpp', code);
+//   try {
+//     const problem = await Problem.findById(problemId);
+//     const testCases = problem.testCases;
+//     let verdict = "Accepted";
+//     for (const testCase of testCases) {
+//       const output = await executeCpp(filepath, testCase.input);
+//       if (output.trim() !== testCase.output.trim()) {
+//         verdict = "Wrong Answer";
+//         break;
+//       }
+//     }
+//     res.json({ verdict });
+//   } catch (error) {
+//     res.status(500).json({ error });
+//   }
+// });
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000!');

@@ -15,6 +15,8 @@ const ProblemPage = () => {
   const [output, setOutput] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [isConsoleVisible, setIsConsoleVisible] = useState(false);
+  const [activeConsoleTab, setActiveConsoleTab] = useState("input");
+  const [verdict, setVerdict] = useState(null);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -39,20 +41,42 @@ const ProblemPage = () => {
         input: customInput,
       });
       setOutput(response.data.output);
+      setVerdict(response.data.verdict);
+      setActiveConsoleTab("output");
     } catch (err) {
       console.error(err);
       setOutput("Error running the code");
+      setVerdict("Runtime Error");
+      setActiveConsoleTab("output");
     }
   };
 
   const handleSubmit = async () => {
     try {
       const response = await axios.post("/submit", { language: "cpp", code });
-      console.log(response.data.output); // You can add logic here to validate the output with test cases
       setOutput(response.data.output);
+      setVerdict(response.data.verdict);
+      setActiveConsoleTab("verdict");
     } catch (err) {
       console.error(err);
       setOutput("Error submitting the code");
+      setVerdict("Submission Error");
+      setActiveConsoleTab("verdict");
+    }
+  };
+
+  const handleVerdictClass = () => {
+    if (verdict === "Accepted") {
+      return "bg-green-500";
+    } else if (
+      verdict === "Wrong Answer" ||
+      verdict === "Runtime Error" ||
+      verdict === "Time Limit Exceeded" ||
+      verdict === "Memory Limit Exceeded"
+    ) {
+      return "bg-red-500";
+    } else {
+      return "bg-yellow-500";
     }
   };
 
@@ -104,9 +128,11 @@ const ProblemPage = () => {
               <p>
                 <strong>Input:</strong>
               </p>
-              <div className="p-2 bg-black text-white rounded">
-                <p>{testCase.input}</p>
-              </div>
+              <textarea
+                className="w-full p-2 bg-black text-white rounded"
+                readOnly
+                value={testCase.input}
+              />
               <div className="flex items-start mt-2">
                 <div className="flex-grow">
                   <CopyToClipboard text={testCase.output}>
@@ -119,9 +145,11 @@ const ProblemPage = () => {
               <p>
                 <strong>Output:</strong>
               </p>
-              <div className="p-2 bg-black text-white rounded mt-2">
-                <p>{testCase.output}</p>
-              </div>
+              <textarea
+                className="w-full p-2 bg-black text-white rounded mt-2"
+                readOnly
+                value={testCase.output}
+              />
             </div>
           ))}
         </div>
@@ -165,15 +193,56 @@ const ProblemPage = () => {
         </div>
         {isConsoleVisible && (
           <div className="mt-4">
-            <textarea
-              className="w-full p-2 bg-gray-800 text-white border rounded"
-              placeholder="Enter custom input"
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              rows={5}
-            />
-            <div className="mt-4 p-2 bg-gray-800 text-white rounded">
-              <pre>{output}</pre>
+            <div className="flex mb-2">
+              <button
+                onClick={() => setActiveConsoleTab("input")}
+                className={`flex-1 py-2 px-4 rounded-t ${
+                  activeConsoleTab === "input"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Input
+              </button>
+              <button
+                onClick={() => setActiveConsoleTab("output")}
+                className={`flex-1 py-2 px-4 rounded-t ${
+                  activeConsoleTab === "output"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Output
+              </button>
+              <button
+                onClick={() => setActiveConsoleTab("verdict")}
+                className={`flex-1 py-2 px-4 rounded-t ${
+                  activeConsoleTab === "verdict"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Verdict
+              </button>
+            </div>
+            <div className="p-4 bg-gray-800 text-white rounded-b">
+              {activeConsoleTab === "input" && (
+                <textarea
+                  className="w-full p-2 bg-gray-800 text-white border rounded"
+                  placeholder="Enter custom input"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  rows={5}
+                />
+              )}
+              {activeConsoleTab === "output" && <pre>{output}</pre>}
+              {activeConsoleTab === "verdict" && (
+                <div className={`p-2 rounded ${handleVerdictClass()}`}>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Verdict: {verdict}
+                  </h3>
+                </div>
+              )}
             </div>
           </div>
         )}
