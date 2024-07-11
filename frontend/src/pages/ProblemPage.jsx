@@ -43,7 +43,7 @@ int main() {
 
   const handleRun = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/run", {
+      const response = await axios.post("http://localhost:5000/run", {
         language: "cpp",
         code,
         input: customInput,
@@ -56,6 +56,57 @@ int main() {
       setOutput("Error running the code");
       setVerdict("Runtime Error");
       setActiveConsoleTab("output");
+    }
+  };
+
+  const handleSubmit = async () => {
+    const testCases = problem.testCases.map((testCase) => ({
+      input: testCase.input,
+      output: testCase.output,
+    }));
+    try {
+      const response = await axios.post("http://localhost:5001/submit", {
+        language: "cpp",
+        code,
+        testCases,
+      });
+
+      setOutput(response.data.output);
+      setVerdict(response.data.verdict);
+      setActiveConsoleTab("output");
+    } catch (err) {
+      console.error(err);
+      setOutput("Error submitting the code");
+      setVerdict("Submission Error");
+      setActiveConsoleTab("output");
+    }
+  };
+
+  // const handleSubmit = async () => {
+  //   try {
+  //     const response = await axios.post("http://localhost:5001/submit", {
+  //       language: "cpp",
+  //       code,
+  //       testCases: problem.testCases,
+  //     });
+  //     console.log("Submit Response:", response.data);
+  //     // Update state or handle response as needed
+  //   } catch (error) {
+  //     console.error("Submit Error:", error);
+  //     // Update state to show an error message to the user
+  //   }
+  // };
+
+  const handleVerdictClass = () => {
+    switch (verdict) {
+      case "Correct Answer":
+        return "bg-green-500";
+      case "Wrong Answer":
+        return "bg-red-500";
+      case "Runtime Error":
+        return "bg-yellow-500";
+      default:
+        return "";
     }
   };
 
@@ -162,6 +213,12 @@ int main() {
             className="mr-4 bg-blue-500 text-white py-2 px-4 rounded"
           >
             Run
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="mr-4 bg-green-500 text-white py-2 px-4 rounded"
+          >
+            Submit
           </button>
         </div>
         {isConsoleVisible && (
