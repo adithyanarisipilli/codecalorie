@@ -11,7 +11,15 @@ const ProblemPage = () => {
   const [problem, setProblem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(`#include <iostream> 
+using namespace std;
+int main() { 
+    int num1, num2, sum;
+    cin >> num1 >> num2;  
+    sum = num1 + num2;  
+    cout << "The sum of the two numbers is: " << sum;  
+    return 0;  
+}`);
   const [output, setOutput] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [isConsoleVisible, setIsConsoleVisible] = useState(false);
@@ -35,7 +43,7 @@ const ProblemPage = () => {
 
   const handleRun = async () => {
     try {
-      const response = await axios.post("/run", {
+      const response = await axios.post("http://localhost:3000/run", {
         language: "cpp",
         code,
         input: customInput,
@@ -48,35 +56,6 @@ const ProblemPage = () => {
       setOutput("Error running the code");
       setVerdict("Runtime Error");
       setActiveConsoleTab("output");
-    }
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.post("/submit", { language: "cpp", code });
-      setOutput(response.data.output);
-      setVerdict(response.data.verdict);
-      setActiveConsoleTab("verdict");
-    } catch (err) {
-      console.error(err);
-      setOutput("Error submitting the code");
-      setVerdict("Submission Error");
-      setActiveConsoleTab("verdict");
-    }
-  };
-
-  const handleVerdictClass = () => {
-    if (verdict === "Accepted") {
-      return "bg-green-500";
-    } else if (
-      verdict === "Wrong Answer" ||
-      verdict === "Runtime Error" ||
-      verdict === "Time Limit Exceeded" ||
-      verdict === "Memory Limit Exceeded"
-    ) {
-      return "bg-red-500";
-    } else {
-      return "bg-yellow-500";
     }
   };
 
@@ -183,12 +162,6 @@ const ProblemPage = () => {
             className="mr-4 bg-blue-500 text-white py-2 px-4 rounded"
           >
             Run
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-green-500 text-white py-2 px-4 rounded"
-          >
-            Submit
           </button>
         </div>
         {isConsoleVisible && (
