@@ -22,22 +22,24 @@ app.post('/submit', async (req, res) => {
   try {
     // Compile and run for each test case
     const results = [];
+    
     for (let i = 0; i < testCases.length; i++) {
       const { input, output } = testCases[i];
       const filePath = await generateFile(language, code);
       const inputPath = await generateInputFile(input);
-      const { stdout, stderr } = await executeCpp(filePath, inputPath);
+      const  stdout  = await executeCpp(filePath, inputPath);
 console.log(input,output,filePath,inputPath);
-      if (stderr) {
-        results.push({ verdict: 'Runtime Error', stdout, stderr });
-      } else {
+console.log(inputPath);
+console.log(stdout);
+
+      
         // Compare output with expected
         const actualOutput = stdout.trim();
         const expectedOutput = output.trim();
         const verdict = actualOutput === expectedOutput ? 'Correct Answer' : 'Wrong Answer';
 
         results.push({ verdict, actualOutput });
-      }
+      
     }
 
     // Write results to Pout file

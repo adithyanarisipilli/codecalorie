@@ -41,7 +41,7 @@ app.post("/run", async (req, res) => {
 
   try {
     // Send request to the compiler server
-    const response = await axios.post('http://localhost:4000/run', { language, code, input });
+    const response = await axios.post('http://localhost:5000/run', { language, code, input });
     const { filePath, inputPath, output } = response.data;
 
     res.json({ filePath, inputPath, output });
