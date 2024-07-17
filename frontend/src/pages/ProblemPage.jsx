@@ -14,10 +14,7 @@ const ProblemPage = () => {
   const [code, setCode] = useState(`#include <iostream> 
 using namespace std;
 int main() { 
-    int num1, num2, sum;
-    cin >> num1 >> num2;  
-    sum = num1 + num2;  
-    cout << "The sum of the two numbers is: " << sum;  
+    //write code here  
     return 0;  
 }`);
   const [output, setOutput] = useState("");
@@ -49,7 +46,7 @@ int main() {
         input: customInput,
       });
       setOutput(response.data.output);
-      setVerdict(response.data.verdict);
+      setVerdict(null); // Clear verdict on manual run
       setActiveConsoleTab("output");
     } catch (err) {
       console.error(err);
@@ -64,6 +61,7 @@ int main() {
       input: testCase.input,
       output: testCase.output,
     }));
+
     try {
       const response = await axios.post("http://localhost:5001/submit", {
         language: "cpp",
@@ -72,30 +70,27 @@ int main() {
       });
 
       setOutput(response.data.output);
-      setVerdict(response.data.verdict);
-      setActiveConsoleTab("output");
+
+      // Check each comparison result
+      const { comparisonResults } = response.data;
+      let allCorrect = true;
+      for (const result of comparisonResults) {
+        if (result.verdict !== "Correct Answer") {
+          allCorrect = false;
+          break; // Exit loop early on wrong answer
+        }
+      }
+
+      // Set the verdict based on the check
+      setVerdict(allCorrect ? "Correct Answer" : "Wrong Answer");
+      setActiveConsoleTab("verdict");
     } catch (err) {
       console.error(err);
       setOutput("Error submitting the code");
       setVerdict("Submission Error");
-      setActiveConsoleTab("output");
+      setActiveConsoleTab("verdict");
     }
   };
-
-  // const handleSubmit = async () => {
-  //   try {
-  //     const response = await axios.post("http://localhost:5001/submit", {
-  //       language: "cpp",
-  //       code,
-  //       testCases: problem.testCases,
-  //     });
-  //     console.log("Submit Response:", response.data);
-  //     // Update state or handle response as needed
-  //   } catch (error) {
-  //     console.error("Submit Error:", error);
-  //     // Update state to show an error message to the user
-  //   }
-  // };
 
   const handleVerdictClass = () => {
     switch (verdict) {
@@ -105,6 +100,8 @@ int main() {
         return "bg-red-500";
       case "Runtime Error":
         return "bg-yellow-500";
+      case "Submission Error":
+        return "bg-gray-500";
       default:
         return "";
     }
@@ -268,9 +265,7 @@ int main() {
               {activeConsoleTab === "output" && <pre>{output}</pre>}
               {activeConsoleTab === "verdict" && (
                 <div className={`p-2 rounded ${handleVerdictClass()}`}>
-                  <h3 className="text-lg font-semibold mb-2">
-                    Verdict: {verdict}
-                  </h3>
+                  {verdict}
                 </div>
               )}
             </div>

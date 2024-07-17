@@ -1,5 +1,3 @@
 export default function Contests() {
-  return (
-    <div>Contests</div>
-  )
+  return <div>Comming Soon..........</div>;
 }

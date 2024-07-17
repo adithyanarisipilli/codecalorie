@@ -48,7 +48,7 @@ console.log(stdout);
     // Compare Pout with hidden outputs (assuming this is handled by main server)
     const response = await axios.post('http://localhost:3000/compare', { testCases });
 
-    res.json(response.data);
+    res.json(response.verdict);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
