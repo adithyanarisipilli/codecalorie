@@ -9,6 +9,8 @@ import commentRoutes from './routes/comment.route.js';
 import cookieParser from 'cookie-parser';
 import axios from 'axios';
 import cors from 'cors';
+import fs from 'fs/promises';
+import Problem from './models/problem.model.js';
 
 dotenv.config();
 
@@ -45,6 +47,30 @@ app.post("/run", async (req, res) => {
     const { filePath, inputPath, output } = response.data;
 
     res.json({ filePath, inputPath, output });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/compare", async (req, res) => {
+  const { testCases } = req.body;
+
+  try {
+    // Read the Pout file
+    const poutContent = await fs.readFile('Pout.txt', 'utf8');
+    const results = JSON.parse(poutContent);
+
+    // Compare the outputs
+    const comparisonResults = testCases.map((testCase, index) => {
+      const result = results[index];
+      const expectedOutput = testCase.output.trim();
+      const actualOutput = result.actualOutput.trim();
+      const verdict = actualOutput === expectedOutput ? 'Correct Answer' : 'Wrong Answer';
+
+      return { input: testCase.input, expectedOutput, actualOutput, verdict };
+    });
+
+    res.json({ success: true, comparisonResults });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
