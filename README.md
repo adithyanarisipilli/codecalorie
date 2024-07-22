@@ -2,6 +2,12 @@
 
 An Online Judge system built using the MERN stack that hosts coding challenges and manages competitions efficiently. This project includes an Admin functionality for managing content, a blog section for discussions, and robust CRUD operations.
 
+
+https://github.com/user-attachments/assets/5bdaf76a-9782-4252-bd6c-994d42f9c4f1
+
+https://github.com/user-attachments/assets/e80f2753-9860-4f5c-9a18-e3c0f7d13b82
+
+
 ## Features
 
 - **Online Judge**: Host coding challenges and manage competitions.
