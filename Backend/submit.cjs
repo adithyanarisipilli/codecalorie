@@ -46,9 +46,9 @@ console.log(stdout);
     await fs.writeFile('Pout.txt', JSON.stringify(results));
 
     // Compare Pout with hidden outputs (assuming this is handled by main server)
-    const response = await axios.post('http://localhost:3000/compare', { testCases });
+    const {data} = await axios.post('http://localhost:3000/compare', { testCases });
 
-    res.json(response.verdict);
+    res.json({comparisionResults: data.comparisionResults});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
