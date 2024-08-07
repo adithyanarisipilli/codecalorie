@@ -27,28 +27,33 @@ app.post('/submit', async (req, res) => {
       const { input, output } = testCases[i];
       const filePath = await generateFile(language, code);
       const inputPath = await generateInputFile(input);
-      const  stdout  = await executeCpp(filePath, inputPath);
-console.log(input,output,filePath,inputPath);
-console.log(inputPath);
-console.log(stdout);
+      const stdout = await executeCpp(filePath, inputPath);
 
-      
-        // Compare output with expected
-        const actualOutput = stdout.trim();
-        const expectedOutput = output.trim();
-        const verdict = actualOutput === expectedOutput ? 'Correct Answer' : 'Wrong Answer';
+      // Log the intermediate values
+      console.log('Input:', input);
+      console.log('Expected Output:', output);
+      console.log('File Path:', filePath);
+      console.log('Input Path:', inputPath);
+      console.log('Stdout:', stdout);
 
-        results.push({ verdict, actualOutput });
-      
+      // Compare output with expected
+      const actualOutput = stdout.trim();
+      const expectedOutput = output.trim();
+      const verdict = actualOutput === expectedOutput ? 'Correct Answer' : 'Wrong Answer';
+
+      results.push({ verdict, actualOutput });
     }
 
     // Write results to Pout file
     await fs.writeFile('Pout.txt', JSON.stringify(results));
 
     // Compare Pout with hidden outputs (assuming this is handled by main server)
-    const {data} = await axios.post('http://localhost:3000/compare', { testCases });
+    const { data } = await axios.post('http://localhost:3000/compare', { testCases });
 
-    res.json({comparisionResults: data.comparisionResults});
+    // Print the comparison results before sending the response
+    console.log('Comparison Results:', data);
+
+    res.json({ comparisionResults: data });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -63,16 +63,15 @@ int main() {
     }));
 
     try {
-      const response = await axios.post("http://localhost:5001/submit", {
+      const { data } = await axios.post("http://localhost:5001/submit", {
         language: "cpp",
         code,
         testCases,
       });
 
-      setOutput(response.data.output);
+      const comparisonResults = data.comparisionResults.comparisonResults;
 
       // Check each comparison result
-      const { comparisonResults } = response.data;
       let allCorrect = true;
       for (const result of comparisonResults) {
         if (result.verdict !== "Correct Answer") {

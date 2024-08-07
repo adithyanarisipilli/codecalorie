@@ -70,11 +70,15 @@ app.post("/compare", async (req, res) => {
       return { input: testCase.input, expectedOutput, actualOutput, verdict };
     });
 
+    // Print the comparison results before sending the response
+    console.log('Comparison Results:', comparisonResults);
+
     res.json({ success: true, comparisonResults });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000!');
