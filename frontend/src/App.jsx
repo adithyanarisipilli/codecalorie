@@ -20,6 +20,7 @@ import Search from "./pages/Search";
 import SearchProblem from "./pages/SearchProblem";
 import ProblemPage from "./pages/ProblemPage";
 import DashProblems from "./components/DashProblems";
+import ContactUs from "./pages/ContactUs";
 
 export default function App() {
   return (
@@ -29,6 +30,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+
+        <Route path="/contactus" element={<ContactUs />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/search" element={<Search />} />

@@ -123,7 +123,7 @@ export default function Search() {
               <option value="asc">Oldest</option>
             </Select>
           </div>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <label className="font-semibold">Category:</label>
             <Select
               onChange={handleChange}
@@ -135,7 +135,7 @@ export default function Search() {
               <option value="nextjs">Next.js</option>
               <option value="javascript">JavaScript</option>
             </Select>
-          </div>
+          </div> */}
           <Button type="submit" outline gradientDuoTone="purpleToPink">
             Apply Filters
           </Button>
@@ -156,7 +156,7 @@ export default function Search() {
           {showMore && (
             <button
               onClick={handleShowMore}
-              className="text-teal-500 text-lg hover:underline p-7 w-full"
+              className="text-orange-500 text-lg hover:underline p-7 w-full"
             >
               Show More
             </button>

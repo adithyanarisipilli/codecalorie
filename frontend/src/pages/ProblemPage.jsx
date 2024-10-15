@@ -206,13 +206,14 @@ int main() {
           </button>
           <button
             onClick={handleRun}
-            className="mr-4 bg-blue-500 text-white py-2 px-4 rounded"
+            className="mr-4 bg-black text-white py-2 px-4 rounded border border-white"
           >
             Run
           </button>
+
           <button
             onClick={handleSubmit}
-            className="mr-4 bg-green-500 text-white py-2 px-4 rounded"
+            className="mr-4 bg-orange-500 text-white py-2 px-4 rounded"
           >
             Submit
           </button>
@@ -224,7 +225,7 @@ int main() {
                 onClick={() => setActiveConsoleTab("input")}
                 className={`flex-1 py-2 px-4 rounded-t ${
                   activeConsoleTab === "input"
-                    ? "bg-blue-500 text-white"
+                    ? "bg-orange-400 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}
               >
@@ -234,7 +235,7 @@ int main() {
                 onClick={() => setActiveConsoleTab("output")}
                 className={`flex-1 py-2 px-4 rounded-t ${
                   activeConsoleTab === "output"
-                    ? "bg-blue-500 text-white"
+                    ? "bg-orange-400 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}
               >
@@ -244,7 +245,7 @@ int main() {
                 onClick={() => setActiveConsoleTab("verdict")}
                 className={`flex-1 py-2 px-4 rounded-t ${
                   activeConsoleTab === "verdict"
-                    ? "bg-blue-500 text-white"
+                    ? "bg-orange-400 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}
               >
