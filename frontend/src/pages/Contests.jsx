@@ -13,17 +13,12 @@ export default function Contests() {
           </h1>
           <div className="text-md text-gray-500 flex flex-col gap-6">
             <p>
-              If you are eager to write a contest on our platform express your
-              thoughts with our founder directly via linkedin
+              We are excited to announce that our platform will soon offer
+              opportunities for you to create and host contests.
             </p>
-
-            <p>He usually get back within 24-72 hours.</p>
           </div>
 
-          {/* Add margin-top to create space between the text and CallToAction */}
-          <div className="mt-10 p-3 bg-amber-100 dark:bg-slate-700">
-            <CallToAction />
-          </div>
+          
         </div>
       </div>
     </div>

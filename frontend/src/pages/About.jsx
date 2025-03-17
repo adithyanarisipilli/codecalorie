@@ -16,9 +16,9 @@ export default function About() {
             <p>
               Welcome to Codecalorie! This website was created by Adithya
               Narisipilli as a personal project to foster a community of
-              competitive programmers and coding enthusiasts. Adithya is a
-              passionate developer who loves solving challenging problems and
-              sharing his knowledge with others.
+              programmers and coding enthusiasts. Adithya is a passionate
+              developer who loves solving challenging problems and sharing his
+              knowledge with others.
             </p>
 
             <p>

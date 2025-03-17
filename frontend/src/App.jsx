@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Problems from "./pages/Problems";
 import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
+import FeatureSection from "./components/FeatureSection";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
