@@ -14,13 +14,6 @@ import Problem from "./models/problem.model.js";
 
 dotenv.config();
 
-app.use(
-  cors({
-    origin: ["https://www.codecalorie-by-adithya-narisipilli.tech"],
-    credentials: true,
-  })
-);
-
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -32,8 +25,22 @@ mongoose
 
 const app = express();
 
+// ✅ FIXED CORS ISSUE
+const allowedOrigins = [
+  "http://localhost:5173", // Local frontend
+  "https://www.codecalorie-by-adithya-narisipilli.tech", // Deployed frontend
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins, // Allow only specific origins
+    credentials: true, // Allow cookies and authentication headers
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  })
+);
+
 app.use(cookieParser());
-app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -87,10 +94,6 @@ app.post("/compare", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000!");
-});
-
 app.use("/backend/user", userRoutes);
 app.use("/backend/auth", authRoutes);
 app.use("/backend/post", postRoutes);
@@ -105,4 +108,9 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}!`);
 });
