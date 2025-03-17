@@ -58,6 +58,10 @@ app.post("/submit", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.json({ message: "Submission server is online!" });
+});
+
 app.listen(5001, () => {
   console.log("Submit server is listening on port 5001!");
 });
