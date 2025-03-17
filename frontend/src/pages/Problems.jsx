@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 const Problems = () => {
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +11,7 @@ const Problems = () => {
   useEffect(() => {
     const fetchProblems = async () => {
       try {
-        const response = await fetch("/backend/problem/getproblems");
+        const response = await fetch(`${API_BASE_URL}/problem/getproblems`);
         if (!response.ok) {
           throw new Error("Failed to fetch problems");
         }
