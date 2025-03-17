@@ -7,24 +7,36 @@ import video1 from "../assets/video1.mp4";
 import video2 from "../assets/video2.mp4";
 import FeatureSection from "../components/FeatureSection"; // Import FeatureSection
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 export default function Home() {
   const [posts, setPosts] = useState([]);
   const [problems, setProblems] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await fetch("/backend/post/getPosts");
-      const data = await res.json();
-      setPosts(data.posts);
+      try {
+        const res = await fetch(`${API_BASE_URL}/post/getPosts`);
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        const data = await res.json();
+        setPosts(data.posts);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
     };
     fetchPosts();
   }, []);
 
   useEffect(() => {
     const fetchProblems = async () => {
-      const res = await fetch("/backend/problem/getProblems");
-      const data = await res.json();
-      setProblems(data.problems);
+      try {
+        const res = await fetch(`${API_BASE_URL}/problem/getProblems`);
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        const data = await res.json();
+        setProblems(data.problems);
+      } catch (error) {
+        console.error("Failed to fetch problems:", error);
+      }
     };
     fetchProblems();
   }, []);
@@ -86,11 +98,26 @@ export default function Home() {
             </Link>
           </div>
         )}
-      </div>
 
-      {/* <div className="p-3 bg-amber-100 dark:bg-slate-700">
-        <CallToAction />
-      </div> */}
+        {problems && problems.length > 0 && (
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-semibold text-center">
+              Recent Problems
+            </h2>
+            <div className="flex flex-wrap gap-4">
+              {problems.map((problem) => (
+                <ProblemCard key={problem._id} problem={problem} />
+              ))}
+            </div>
+            <Link
+              to={"/search-problems"}
+              className="text-lg text-orange-500 hover:underline text-center"
+            >
+              View all problems
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
