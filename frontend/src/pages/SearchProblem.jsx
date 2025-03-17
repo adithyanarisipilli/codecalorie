@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProblemCard from "../components/ProblemCard";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com"; // Change this to your API base URL
+
 export default function SearchProblem() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
@@ -31,7 +33,9 @@ export default function SearchProblem() {
     const fetchProblems = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`/backend/problem/getproblems?${searchQuery}`);
+      const res = await fetch(
+        `${API_BASE_URL}/backend/problem/getproblems?${searchQuery}`
+      );
       if (!res.ok) {
         setLoading(false);
         return;
@@ -39,11 +43,7 @@ export default function SearchProblem() {
       const data = await res.json();
       setProblems(data.problems);
       setLoading(false);
-      if (data.problems.length === 9) {
-        setShowMore(true);
-      } else {
-        setShowMore(false);
-      }
+      setShowMore(data.problems.length === 9);
     };
 
     fetchProblems();
@@ -59,8 +59,7 @@ export default function SearchProblem() {
     const urlParams = new URLSearchParams();
     urlParams.set("searchTerm", sidebarData.searchTerm);
     urlParams.set("sort", sidebarData.sort);
-    const searchQuery = urlParams.toString();
-    navigate(`/search-problems?${searchQuery}`);
+    navigate(`/search-problems?${urlParams.toString()}`);
   };
 
   const handleShowMore = async () => {
@@ -68,18 +67,15 @@ export default function SearchProblem() {
     const startIndex = numberOfProblems;
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("startIndex", startIndex);
-    const searchQuery = urlParams.toString();
-    const res = await fetch(`/backend/problem/getproblems?${searchQuery}`);
+    const res = await fetch(
+      `${API_BASE_URL}/backend/problem/getproblems?${urlParams.toString()}`
+    );
     if (!res.ok) {
       return;
     }
     const data = await res.json();
     setProblems([...problems, ...data.problems]);
-    if (data.problems.length === 9) {
-      setShowMore(true);
-    } else {
-      setShowMore(false);
-    }
+    setShowMore(data.problems.length === 9);
   };
 
   return (

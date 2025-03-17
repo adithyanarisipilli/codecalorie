@@ -14,6 +14,8 @@ import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 export default function UpdatePost() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
@@ -30,7 +32,9 @@ export default function UpdatePost() {
     console.log("postId:", postId);
     try {
       const fetchPost = async () => {
-        const res = await fetch(`/backend/post/getposts?postId=${postId}`);
+        const res = await fetch(
+          `${API_BASE_URL}/post/getposts?postId=${postId}`
+        );
         const data = await res.json();
         if (!res.ok) {
           console.log(data.message);
@@ -89,7 +93,7 @@ export default function UpdatePost() {
     e.preventDefault();
     try {
       const res = await fetch(
-        `/backend/post/updatepost/${postId}/${currentUser._id}`,
+        `${API_BASE_URL}/post/updatepost/${postId}/${currentUser._id}`,
         {
           method: "PUT",
           headers: {
