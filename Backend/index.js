@@ -14,6 +14,13 @@ import Problem from "./models/problem.model.js";
 
 dotenv.config();
 
+app.use(
+  cors({
+    origin: ["https://www.codecalorie-by-adithya-narisipilli.tech"],
+    credentials: true,
+  })
+);
+
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
