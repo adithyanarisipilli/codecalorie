@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 export default function DashComments() {
   const { currentUser } = useSelector((state) => state.user);
   const [comments, setComments] = useState([]);
@@ -13,7 +15,7 @@ export default function DashComments() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`/backend/comment/getcomments`);
+        const res = await fetch(`${API_BASE_URL}/comment/getcomments`);
         const data = await res.json();
         if (res.ok) {
           setComments(data.comments);
@@ -34,7 +36,7 @@ export default function DashComments() {
     const startIndex = comments.length;
     try {
       const res = await fetch(
-        `/backend/comment/getcomments?startIndex=${startIndex}`
+        `${API_BASE_URL}/comment/getcomments?startIndex=${startIndex}`
       );
       const data = await res.json();
       if (res.ok) {
@@ -52,7 +54,7 @@ export default function DashComments() {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/backend/comment/deleteComment/${commentIdToDelete}`,
+        `${API_BASE_URL}/comment/deleteComment/${commentIdToDelete}`,
         {
           method: "DELETE",
         }
