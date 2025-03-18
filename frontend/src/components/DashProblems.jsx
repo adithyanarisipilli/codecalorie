@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 export default function DashProblems() {
   const { currentUser } = useSelector((state) => state.user);
   const [userProblems, setUserProblems] = useState([]);
@@ -15,7 +17,7 @@ export default function DashProblems() {
     const fetchProblems = async () => {
       try {
         const res = await fetch(
-          `/backend/problem/getproblems?userId=${currentUser._id}`
+          `${API_BASE_URL}/problem/getproblems?userId=${currentUser._id}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -37,7 +39,7 @@ export default function DashProblems() {
     const startIndex = userProblems.length;
     try {
       const res = await fetch(
-        `/backend/problem/getproblems?userId=${currentUser._id}&startIndex=${startIndex}`
+        `${API_BASE_URL}/problem/getproblems?userId=${currentUser._id}&startIndex=${startIndex}`
       );
       const data = await res.json();
       if (res.ok) {
@@ -55,7 +57,7 @@ export default function DashProblems() {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/backend/problem/deleteproblem/${problemIdToDelete}/${currentUser._id}`,
+        `${API_BASE_URL}/problem/deleteproblem/${problemIdToDelete}/${currentUser._id}`,
         {
           method: "DELETE",
         }

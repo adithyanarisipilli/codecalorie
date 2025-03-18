@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-// import { set } from "mongoose";
+
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
 
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
@@ -11,11 +12,12 @@ export default function DashPosts() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState("");
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const res = await fetch(
-          `/backend/post/getposts?userId=${currentUser._id}`
+          `${API_BASE_URL}/post/getposts?userId=${currentUser._id}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -37,7 +39,7 @@ export default function DashPosts() {
     const startIndex = userPosts.length;
     try {
       const res = await fetch(
-        `/backend/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+        `${API_BASE_URL}/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
       );
       const data = await res.json();
       if (res.ok) {
@@ -55,7 +57,7 @@ export default function DashPosts() {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/backend/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        `${API_BASE_URL}/post/deletepost/${postIdToDelete}/${currentUser._id}`,
         {
           method: "DELETE",
         }
@@ -89,7 +91,7 @@ export default function DashPosts() {
               </Table.HeadCell>
             </Table.Head>
             {userPosts.map((post) => (
-              <Table.Body className="divide-y">
+              <Table.Body className="divide-y" key={post._id}>
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
                     {new Date(post.updatedAt).toLocaleDateString()}
