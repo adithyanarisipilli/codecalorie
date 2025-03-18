@@ -10,8 +10,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
-const COMPILER_URL = process.env.VITE_COMPILER_URL;
-const SUBMISSION_URL = process.env.VITE_SUBMISSION_URL;
+const COMPILER_URL = "https://online-judge-compiler.onrender.com";
+const SUBMISSION_URL = "https://online-judge-submission.onrender.com";
 
 const ProblemPage = () => {
   const { problemId } = useParams();
