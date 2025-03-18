@@ -14,6 +14,8 @@ import { signoutSuccess } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 export default function DashSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -30,7 +32,7 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch("/backend/user/signout", {
+      const res = await fetch(`${API_BASE_URL}/user/signout`, {
         method: "POST",
       });
       const data = await res.json();
@@ -85,7 +87,7 @@ export default function DashSidebar() {
             <Link to="/dashboard?tab=problems">
               <Sidebar.Item
                 active={tab === "problems"}
-                icon={HiPuzzle} 
+                icon={HiPuzzle}
                 as="div"
               >
                 Problems

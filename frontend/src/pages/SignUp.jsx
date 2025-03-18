@@ -3,14 +3,18 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
@@ -19,7 +23,7 @@ export default function SignUp() {
     try {
       setLoading(true);
       setErrorMessage(null);
-      const res = await fetch("/backend/auth/signup", {
+      const res = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -38,25 +42,21 @@ export default function SignUp() {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen mt-20">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* left */}
         <div className="flex-1">
           <Link to="/" className="font-bold dark:text-white text-4xl">
-            <span className="px-2 py-1  rounded-lg text-white">
-              Codecalorie
-            </span>
+            <span className="px-2 py-1 rounded-lg text-white">Codecalorie</span>
           </Link>
-
           <p className="text-sm mt-5">
             Welcome to my project. You can sign up with your email and password
             or with Google.
           </p>
         </div>
-
         {/* right */}
-
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
@@ -86,11 +86,7 @@ export default function SignUp() {
                 onChange={handleChange}
               />
             </div>
-            <Button
-              
-              type="submit"
-              disabled={loading}
-            >
+            <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
                   <Spinner size="sm" />
