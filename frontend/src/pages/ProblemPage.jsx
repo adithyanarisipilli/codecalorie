@@ -1,279 +1,110 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/mode-c_cpp";
-import "ace-builds/src-noconflict/theme-monokai";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Avatar, Button, Dropdown, Navbar } from "flowbite-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleTheme } from "../redux/theme/themeSlice";
+import { signoutSuccess } from "../redux/user/userSlice";
+import { useEffect, useState } from "react";
+import logo from "../assets/logo.png";
 
-const ProblemPage = () => {
-  const { problemId } = useParams();
-  const [problem, setProblem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [code, setCode] = useState(`#include <iostream> 
-using namespace std;
-int main() { 
-    //write code here  
-    return 0;  
-}`);
-  const [output, setOutput] = useState("");
-  const [customInput, setCustomInput] = useState("");
-  const [isConsoleVisible, setIsConsoleVisible] = useState(false);
-  const [activeConsoleTab, setActiveConsoleTab] = useState("input");
-  const [verdict, setVerdict] = useState(null);
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
+export default function Header() {
+  const path = useLocation().pathname;
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  const toggleNavbar = () => {
+    setMobileDrawerOpen(!mobileDrawerOpen);
+  };
 
   useEffect(() => {
-    const fetchProblem = async () => {
-      try {
-        const response = await axios.get(`/backend/problem/${problemId}`);
-        setProblem(response.data);
-      } catch (error) {
-        setError("Failed to fetch problem");
-      } finally {
-        setLoading(false);
-      }
-    };
+    // No search functionality, so this effect is no longer needed
+  }, [location.search]);
 
-    fetchProblem();
-  }, [problemId]);
-
-  const handleRun = async () => {
+  const handleSignout = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/run", {
-        language: "cpp",
-        code,
-        input: customInput,
+      const res = await fetch(`${API_BASE_URL}/user/signout`, {
+        method: "POST",
       });
-      setOutput(response.data.output);
-      setVerdict(null); // Clear verdict on manual run
-      setActiveConsoleTab("output");
-    } catch (err) {
-      console.error(err);
-      setOutput("Error running the code");
-      setVerdict("Runtime Error");
-      setActiveConsoleTab("output");
-    }
-  };
-
-  const handleSubmit = async () => {
-    const testCases = problem.testCases.map((testCase) => ({
-      input: testCase.input,
-      output: testCase.output,
-    }));
-
-    try {
-      const { data } = await axios.post("http://localhost:5001/submit", {
-        language: "cpp",
-        code,
-        testCases,
-      });
-
-      const comparisonResults = data.comparisionResults.comparisonResults;
-
-      // Check each comparison result
-      let allCorrect = true;
-      for (const result of comparisonResults) {
-        if (result.verdict !== "Correct Answer") {
-          allCorrect = false;
-          break; // Exit loop early on wrong answer
-        }
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
       }
-
-      // Set the verdict based on the check
-      setVerdict(allCorrect ? "Correct Answer" : "Wrong Answer");
-      setActiveConsoleTab("verdict");
-    } catch (err) {
-      console.error(err);
-      setOutput("Error submitting the code");
-      setVerdict("Submission Error");
-      setActiveConsoleTab("verdict");
+    } catch (error) {
+      console.log(error.message);
     }
   };
-
-  const handleVerdictClass = () => {
-    switch (verdict) {
-      case "Correct Answer":
-        return "bg-green-500";
-      case "Wrong Answer":
-        return "bg-red-500";
-      case "Runtime Error":
-        return "bg-yellow-500";
-      case "Submission Error":
-        return "bg-gray-500";
-      default:
-        return "";
-    }
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
-    <div className="flex flex-col md:flex-row p-4">
-      <div className="md:w-1/2">
-        <h1 className="text-2xl font-bold">{problem.title}</h1>
-        <p className="mt-4">{problem.description}</p>
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Input Format</h2>
-          <p>{problem.input}</p>
+    <Navbar className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-700/80">
+      <Link
+        to="/"
+        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
+      >
+        <div className="flex items-center flex-shrink-0">
+          <img className="h-10 w-10 mr-2" src={logo} alt="Logo" />
+          <span className="text-xl tracking-tight">CodeCalorie</span>
         </div>
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Output Format</h2>
-          <p>{problem.output}</p>
-        </div>
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Constraints</h2>
-          <p>{problem.constraints}</p>
-        </div>
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Rating</h2>
-          <p>{problem.rating}</p>
-        </div>
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold">Test Cases</h2>
-          {problem.testCases.map((testCase, index) => (
-            <div key={index} className="mt-4 border rounded p-4">
-              <div className="flex items-start mb-2">
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold">
-                    Test Case {index + 1}
-                  </h3>
-                </div>
-                <CopyToClipboard text={testCase.input}>
-                  <button className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded inline-flex items-center">
-                    Copy Input
-                  </button>
-                </CopyToClipboard>
-              </div>
-              <p>
-                <strong>Input:</strong>
-              </p>
-              <textarea
-                className="w-full p-2 bg-black text-white rounded"
-                readOnly
-                value={testCase.input}
-              />
-              <div className="flex items-start mt-2">
-                <div className="flex-grow">
-                  <CopyToClipboard text={testCase.output}>
-                    <button className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded inline-flex items-center">
-                      Copy Output
-                    </button>
-                  </CopyToClipboard>
-                </div>
-              </div>
-              <p>
-                <strong>Output:</strong>
-              </p>
-              <textarea
-                className="w-full p-2 bg-black text-white rounded mt-2"
-                readOnly
-                value={testCase.output}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="md:w-1/2 mt-4 md:mt-0 md:ml-4">
-        <AceEditor
-          mode="c_cpp"
-          theme="monokai"
-          name="editor"
-          editorProps={{ $blockScrolling: true }}
-          value={code}
-          onChange={setCode}
-          fontSize={14}
-          width="100%"
-          height="400px"
-          setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            enableSnippets: true,
-          }}
-        />
-        <div className="flex mt-4">
-          <button
-            onClick={() => setIsConsoleVisible(!isConsoleVisible)}
-            className="mr-4 bg-gray-500 text-white py-2 px-4 rounded"
+      </Link>
+      <div className="flex gap-2 md:order-2">
+        <Button
+          className="w-12 h-10 hidden sm:inline"
+          color="orange"
+          pill
+          onClick={() => dispatch(toggleTheme())}
+        >
+          Toggle Theme
+        </Button>
+        {currentUser ? (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar alt="user" img={currentUser.profilePicture} rounded />
+            }
           >
-            Console
-          </button>
-          <button
-            onClick={handleRun}
-            className="mr-4 bg-black text-white py-2 px-4 rounded border border-white"
-          >
-            Run
-          </button>
-
-          <button
-            onClick={handleSubmit}
-            className="mr-4 bg-orange-500 text-white py-2 px-4 rounded"
-          >
-            Submit
-          </button>
-        </div>
-        {isConsoleVisible && (
-          <div className="mt-4">
-            <div className="flex mb-2">
-              <button
-                onClick={() => setActiveConsoleTab("input")}
-                className={`flex-1 py-2 px-4 rounded-t ${
-                  activeConsoleTab === "input"
-                    ? "bg-orange-400 text-white"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                Input
-              </button>
-              <button
-                onClick={() => setActiveConsoleTab("output")}
-                className={`flex-1 py-2 px-4 rounded-t ${
-                  activeConsoleTab === "output"
-                    ? "bg-orange-400 text-white"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                Output
-              </button>
-              <button
-                onClick={() => setActiveConsoleTab("verdict")}
-                className={`flex-1 py-2 px-4 rounded-t ${
-                  activeConsoleTab === "verdict"
-                    ? "bg-orange-400 text-white"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                Verdict
-              </button>
-            </div>
-            <div className="p-4 bg-gray-800 text-white rounded-b">
-              {activeConsoleTab === "input" && (
-                <textarea
-                  className="w-full p-2 bg-gray-800 text-white border rounded"
-                  placeholder="Enter custom input"
-                  value={customInput}
-                  onChange={(e) => setCustomInput(e.target.value)}
-                  rows={5}
-                />
-              )}
-              {activeConsoleTab === "output" && <pre>{output}</pre>}
-              {activeConsoleTab === "verdict" && (
-                <div className={`p-2 rounded ${handleVerdictClass()}`}>
-                  {verdict}
-                </div>
-              )}
-            </div>
-          </div>
+            <Dropdown.Header>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm font-medium truncate">
+                {currentUser.email}
+              </span>
+            </Dropdown.Header>
+            <Link to={"/dashboard?tab=profile"}>
+              <Dropdown.Item>Profile</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
+          </Dropdown>
+        ) : (
+          <Link to="/sign-in">
+            <Button gradientDuoTone="pinkToOrange" outline>
+              Sign In
+            </Button>
+          </Link>
         )}
+        <Navbar.Toggle />
       </div>
-    </div>
+      <Navbar.Collapse>
+        <Navbar.Link active={path === "/"} as={"div"}>
+          <Link to="/">Home</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === "/contests"} as={"div"}>
+          <Link to="/contests">Contests</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === "/search-problems"} as={"div"}>
+          <Link to="/search-problems">Problems</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === "/search"} as={"div"}>
+          <Link to="/search">Posts</Link>
+        </Navbar.Link>
+      </Navbar.Collapse>
+    </Navbar>
   );
-};
-
-export default ProblemPage;
+}
