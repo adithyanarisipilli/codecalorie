@@ -5,9 +5,6 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-c_cpp";
 import "ace-builds/src-noconflict/theme-monokai";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
 const COMPILER_URL = "https://online-judge-compiler.onrender.com";
