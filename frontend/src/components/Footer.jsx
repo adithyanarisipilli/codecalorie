@@ -48,13 +48,13 @@ export default function FooterCom() {
             <div>
               <Footer.Title title="Follow us" />
               <Footer.LinkGroup col>
-                <Footer.Link
+                {/* <Footer.Link
                   href="https://github.com/adithyanarisipilli"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Github
-                </Footer.Link>
+                </Footer.Link> */}
                 <Footer.Link href="#">Discord</Footer.Link>
               </Footer.LinkGroup>
             </div>
