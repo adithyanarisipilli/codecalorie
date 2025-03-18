@@ -1,0 +1,94 @@
+[33m45e2bf4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m made changes in Home.jsx
+[33m92229fd[m small change
+[33m18435df[m removed logo
+[33m6d495eb[m changed code in folder pages files
+[33meffe257[m made changes in components folder files
+[33m4bdeea6[m changes made
+[33m7a7402c[m quite change in some files
+[33m32e1c0d[m made changes to Home.jsx
+[33meccc937[m fixing cors issue
+[33m2c353b8[m fixing cors error
+[33m59d9aac[m installation of dotenv in frontend folder
+[33mbcf08ed[m another small change
+[33m2d7e9eb[m just small change
+[33m4feac2d[m ready to deploy
+[33m947173b[m made only frontend changes
+[33meee45ee[m Merge branch 'main' of https://github.com/adithyanarisipilli/codecalorie
+[33m84421bb[m completed submit functionality
+[33m88fe05a[m Update README.md
+[33m53f48de[m test2
+[33m708d822[m Merge branch 'main' of https://github.com/adithyanarisipilli/codecalorie
+[33m825466e[m test
+[33m8e35f45[m Update README.md
+[33mead2824[m Update README.md
+[33m93acf51[m solved error in authentication part
+[33mdd631a7[m completed submit functionality
+[33m4af0b33[m Merge branch 'main' of https://github.com/adithyanarisipilli/codecalorie
+[33m44b62de[m completed the index.js just change the ProblemPage.jsx to show the verdict
+[33m762e864[m Create README.md
+[33m3b853ae[m made changes in compiler
+[33m3971a80[m got bug while submitting the problem
+[33m45e0542[m completed normal input output compiler part
+[33mf803748[m made modifications in problempage
+[33m14c0228[m updated index.js file
+[33m5176310[m now start run compiler
+[33m88e8be9[m again changed problem page
+[33m80a553e[m added problem page
+[33m676df4b[m error in loading problem page
+[33maf5545b[m done backend for online compiler
+[33m2a86b5b[m start compiler crud part finished
+[33m9716fc5[m CRUD part completed
+[33m16e5e5d[m crud part
+[33m8498b16[m complete create a problem page ui
+[33me45b919[m completed as a blog app start online judge
+[33m9888786[m updated app.jsx
+[33m455e50a[m complete search page
+[33m98d8e5b[m complete the home page
+[33mf0c70a0[m add dashboard overview to the admin dashboard
+[33m8388d96[m add call to action to the post page
+[33m8022247[m complete post page functionality
+[33m42a929d[m add delete user functionality to the admin user
+[33m348ad51[m show users to the admin dashboard
+[33m48d0cdc[m create get users api route
+[33mfa6010b[m add update post functionality
+[33mf365b5a[m add delete post functionality to the dashboard
+[33ma221bc8[m add show more functionality to the posts results of the dashboard
+[33m234baf6[m show user posts inside dashboard
+[33me8293d0[m create get posts api route
+[33m95bec82[m add posts section to the dashboard
+[33m507e90f[m complete create post functionality
+[33m7e72fcf[m complete upload post image functionality
+[33m1e834e6[m Add create a post API route
+[33m8df7c90[m complete create a post page ui(later changed to problem)
+[33m5f427d8[m add admin fucntionality to the user
+[33md01fa01[m add signout functionality
+[33m12e935e[m Complete delete user account functionality
+[33md27a8ae[m add delete user api route
+[33m5b096f2[m Complete update user profile page functionality
+[33maeb4274[m Add update user API route
+[33m34018af[m Correct Complete user image upload functionality
+[33mf23fdb8[m Complete user image upload functionality
+[33mcc70301[m complete profile page UI
+[33m1885803[m Complete sidebar of the dashboard
+[33m65079f3[m Make the dashboard private
+[33m765754d[m complete dark mode functionality
+[33m312d2fc[m update header component with user data
+[33m321aaab[m add Google OAuth functionality
+[33m5a30379[m add redux persist
+[33m992f01a[m add redux toolkit
+[33m883de30[m complete signin page functionality
+[33m5a0ac11[m create sign in api route
+[33mb7b0e3c[m create and add the footer component
+[33mc7d89d2[m add functionality to the sign up page
+[33m2c950cc[m create sign up page ui
+[33m93f104a[m add a middleware and a function to handle errors
+[33m58b8c5a[m create sign up api route
+[33m0de43e1[m create test api route
+[33m96f7ba9[m create user model
+[33m7555923[m connect to the database
+[33meb87f1c[m create and run the server
+[33md3703f5[m create header section
+[33m80f441d[m Merge branch 'main' of https://github.com/adithyanarisipilli/codecalorie
+[33m84ca3c0[m create pages and routes
+[33m50c6f2f[m Delete .vscode directory
+[33mb508a69[m install react js and tailwind css and create the first template
