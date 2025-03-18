@@ -11,6 +11,8 @@ import {
 import { app } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+
 const CreateProblem = () => {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
@@ -82,7 +84,7 @@ const CreateProblem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/backend/problem/create", {
+      const res = await fetch(`${API_BASE_URL}/problem/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,109 +139,13 @@ const CreateProblem = () => {
           placeholder="Description"
           required
           id="description"
-          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+          className="resize-y min-h-24 p-2 border rounded-md"
           onChange={(e) => {
             setFormData({ ...formData, description: e.target.value });
             handleTextareaChange(e);
           }}
         />
 
-        <textarea
-          placeholder="Input"
-          required
-          id="input"
-          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-          onChange={(e) => {
-            setFormData({ ...formData, input: e.target.value });
-            handleTextareaChange(e);
-          }}
-        />
-
-        <textarea
-          placeholder="Constraints"
-          required
-          id="constraints"
-          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-          onChange={(e) => {
-            setFormData({ ...formData, constraints: e.target.value });
-            handleTextareaChange(e);
-          }}
-        />
-
-        <textarea
-          placeholder="Output"
-          required
-          id="output"
-          className="resize-y min-h-24 p-2 border rounded-md text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-          onChange={(e) => {
-            setFormData({ ...formData, output: e.target.value });
-            handleTextareaChange(e);
-          }}
-        />
-
-        {testCases.map((testCase, index) => (
-          <div key={index} className="flex gap-4 items-center">
-            <textarea
-              placeholder="Solved_Tc_input"
-              required
-              value={testCase.input}
-              className="resize-y min-h-24 p-2 border rounded-md flex-1 text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-              onChange={(e) => {
-                handleTestCaseChange(index, "input", e.target.value);
-                handleTextareaChange(e);
-              }}
-            />
-            <textarea
-              placeholder="Solved_Tc_output"
-              required
-              value={testCase.output}
-              className="resize-y min-h-24 p-2 border rounded-md flex-1 text-black dark:text-white bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-              onChange={(e) => {
-                handleTestCaseChange(index, "output", e.target.value);
-                handleTextareaChange(e);
-              }}
-            />
-            <Button onClick={() => handleDeleteTestCase(index)}>Delete</Button>
-          </div>
-        ))}
-        <Button type="button" onClick={handleAddTestCase}>
-          Add Test Case
-        </Button>
-
-        <div className="flex gap-4 items-center">
-          <FileInput
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-          <Button
-            type="button"
-            gradientDuoTone="purpleToBlue"
-            size="sm"
-            outline
-            onClick={handleUploadImage}
-            disabled={imageUploadProgress}
-          >
-            {imageUploadProgress ? (
-              <div className="w-16 h-16">
-                <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
-                />
-              </div>
-            ) : (
-              "Upload Image"
-            )}
-          </Button>
-        </div>
-        {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
-        {formData.image && (
-          <img
-            src={formData.image}
-            alt="upload"
-            className="w-full h-72 object-cover"
-          />
-        )}
         <Button type="submit" gradientDuoTone="purpleToPink">
           Publish
         </Button>
