@@ -35,15 +35,14 @@ export default function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-
+        <Route path="/search" element={<Search />} />
+        <Route path="/problems" element={<Problems />} />
+        <Route path="/contests" element={<Contests />} />
+        <Route path="/post/:postSlug" element={<PostPage />} />
+        <Route path="/search-problems" element={<SearchProblem />} />
+        <Route path="/problem/:problemId" element={<ProblemPage />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/problems" element={<Problems />} />
-          <Route path="/contests" element={<Contests />} />
-          <Route path="/post/:postSlug" element={<PostPage />} />
-          <Route path="/search-problems" element={<SearchProblem />} />
-          <Route path="/problem/:problemId" element={<ProblemPage />} />
         </Route>
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path="/create-post" element={<CreatePost />} />
