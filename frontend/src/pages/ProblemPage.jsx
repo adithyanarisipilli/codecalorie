@@ -52,7 +52,7 @@ int main() {
         input: customInput,
       });
       setOutput(response.data.output);
-      setVerdict(null);
+      setVerdict(null); // Clear verdict on manual run
       setActiveConsoleTab("output");
     } catch (err) {
       console.error(err);
@@ -77,9 +77,14 @@ int main() {
 
       const comparisonResults = data.comparisionResults.comparisonResults;
 
-      let allCorrect = comparisonResults.every(
-        (result) => result.verdict === "Correct Answer"
-      );
+      let allCorrect = true;
+      for (const result of comparisonResults) {
+        if (result.verdict !== "Correct Answer") {
+          allCorrect = false;
+          break;
+        }
+      }
+
       setVerdict(allCorrect ? "Correct Answer" : "Wrong Answer");
       setActiveConsoleTab("verdict");
     } catch (err) {
@@ -89,7 +94,6 @@ int main() {
       setActiveConsoleTab("verdict");
     }
   };
-
   const handleVerdictClass = () => {
     switch (verdict) {
       case "Correct Answer":
@@ -130,6 +134,54 @@ int main() {
           <h2 className="text-xl font-semibold">Constraints</h2>
           <p>{problem.constraints}</p>
         </div>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Rating</h2>
+          <p>{problem.rating}</p>
+        </div>
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold">Test Cases</h2>
+          {problem.testCases.map((testCase, index) => (
+            <div key={index} className="mt-4 border rounded p-4">
+              <div className="flex items-start mb-2">
+                <div className="flex-grow">
+                  <h3 className="text-lg font-semibold">
+                    Test Case {index + 1}
+                  </h3>
+                </div>
+                <CopyToClipboard text={testCase.input}>
+                  <button className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded inline-flex items-center">
+                    Copy Input
+                  </button>
+                </CopyToClipboard>
+              </div>
+              <p>
+                <strong>Input:</strong>
+              </p>
+              <textarea
+                className="w-full p-2 bg-black text-white rounded"
+                readOnly
+                value={testCase.input}
+              />
+              <div className="flex items-start mt-2">
+                <div className="flex-grow">
+                  <CopyToClipboard text={testCase.output}>
+                    <button className="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2 rounded inline-flex items-center">
+                      Copy Output
+                    </button>
+                  </CopyToClipboard>
+                </div>
+              </div>
+              <p>
+                <strong>Output:</strong>
+              </p>
+              <textarea
+                className="w-full p-2 bg-black text-white rounded mt-2"
+                readOnly
+                value={testCase.output}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <div className="md:w-1/2 mt-4 md:mt-0 md:ml-4">
         <AceEditor
@@ -150,11 +202,18 @@ int main() {
         />
         <div className="flex mt-4">
           <button
+            onClick={() => setIsConsoleVisible(!isConsoleVisible)}
+            className="mr-4 bg-gray-500 text-white py-2 px-4 rounded"
+          >
+            Console
+          </button>
+          <button
             onClick={handleRun}
             className="mr-4 bg-black text-white py-2 px-4 rounded border border-white"
           >
             Run
           </button>
+
           <button
             onClick={handleSubmit}
             className="mr-4 bg-orange-500 text-white py-2 px-4 rounded"
@@ -163,22 +222,56 @@ int main() {
           </button>
         </div>
         {isConsoleVisible && (
-          <div className="mt-4 p-4 bg-gray-800 text-white rounded">
-            {activeConsoleTab === "input" && (
-              <textarea
-                className="w-full p-2 bg-gray-800 text-white border rounded"
-                placeholder="Enter custom input"
-                value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
-                rows={5}
-              />
-            )}
-            {activeConsoleTab === "output" && <pre>{output}</pre>}
-            {activeConsoleTab === "verdict" && (
-              <div className={`p-2 rounded ${handleVerdictClass()}`}>
-                {verdict}
-              </div>
-            )}
+          <div className="mt-4">
+            <div className="flex mb-2">
+              <button
+                onClick={() => setActiveConsoleTab("input")}
+                className={`flex-1 py-2 px-4 rounded-t ${
+                  activeConsoleTab === "input"
+                    ? "bg-orange-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Input
+              </button>
+              <button
+                onClick={() => setActiveConsoleTab("output")}
+                className={`flex-1 py-2 px-4 rounded-t ${
+                  activeConsoleTab === "output"
+                    ? "bg-orange-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Output
+              </button>
+              <button
+                onClick={() => setActiveConsoleTab("verdict")}
+                className={`flex-1 py-2 px-4 rounded-t ${
+                  activeConsoleTab === "verdict"
+                    ? "bg-orange-400 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Verdict
+              </button>
+            </div>
+            <div className="p-4 bg-gray-800 text-white rounded-b">
+              {activeConsoleTab === "input" && (
+                <textarea
+                  className="w-full p-2 bg-gray-800 text-white border rounded"
+                  placeholder="Enter custom input"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  rows={5}
+                />
+              )}
+              {activeConsoleTab === "output" && <pre>{output}</pre>}
+              {activeConsoleTab === "verdict" && (
+                <div className={`p-2 rounded ${handleVerdictClass()}`}>
+                  {verdict}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
