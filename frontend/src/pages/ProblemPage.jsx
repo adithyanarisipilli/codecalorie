@@ -1,110 +1,192 @@
-import { Avatar, Button, Dropdown, Navbar } from "flowbite-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleTheme } from "../redux/theme/themeSlice";
-import { signoutSuccess } from "../redux/user/userSlice";
-import { useEffect, useState } from "react";
-import logo from "../assets/logo.png";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-c_cpp";
+import "ace-builds/src-noconflict/theme-monokai";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const API_BASE_URL = "https://online-judge-backend-jj0q.onrender.com/backend";
+const COMPILER_URL = process.env.VITE_COMPILER_URL;
+const SUBMISSION_URL = process.env.VITE_SUBMISSION_URL;
 
-export default function Header() {
-  const path = useLocation().pathname;
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user);
-  const { theme } = useSelector((state) => state.theme);
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-
-  const toggleNavbar = () => {
-    setMobileDrawerOpen(!mobileDrawerOpen);
-  };
+const ProblemPage = () => {
+  const { problemId } = useParams();
+  const [problem, setProblem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [code, setCode] = useState(`#include <iostream> 
+using namespace std;
+int main() { 
+    //write code here  
+    return 0;  
+}`);
+  const [output, setOutput] = useState("");
+  const [customInput, setCustomInput] = useState("");
+  const [isConsoleVisible, setIsConsoleVisible] = useState(false);
+  const [activeConsoleTab, setActiveConsoleTab] = useState("input");
+  const [verdict, setVerdict] = useState(null);
 
   useEffect(() => {
-    // No search functionality, so this effect is no longer needed
-  }, [location.search]);
-
-  const handleSignout = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/user/signout`, {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        dispatch(signoutSuccess());
+    const fetchProblem = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/problem/${problemId}`
+        );
+        setProblem(response.data);
+      } catch (error) {
+        setError("Failed to fetch problem");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.log(error.message);
+    };
+
+    fetchProblem();
+  }, [problemId]);
+
+  const handleRun = async () => {
+    try {
+      const response = await axios.post(`${COMPILER_URL}/run`, {
+        language: "cpp",
+        code,
+        input: customInput,
+      });
+      setOutput(response.data.output);
+      setVerdict(null);
+      setActiveConsoleTab("output");
+    } catch (err) {
+      console.error(err);
+      setOutput("Error running the code");
+      setVerdict("Runtime Error");
+      setActiveConsoleTab("output");
     }
   };
 
+  const handleSubmit = async () => {
+    const testCases = problem.testCases.map((testCase) => ({
+      input: testCase.input,
+      output: testCase.output,
+    }));
+
+    try {
+      const { data } = await axios.post(`${SUBMISSION_URL}/submit`, {
+        language: "cpp",
+        code,
+        testCases,
+      });
+
+      const comparisonResults = data.comparisionResults.comparisonResults;
+
+      let allCorrect = comparisonResults.every(
+        (result) => result.verdict === "Correct Answer"
+      );
+      setVerdict(allCorrect ? "Correct Answer" : "Wrong Answer");
+      setActiveConsoleTab("verdict");
+    } catch (err) {
+      console.error(err);
+      setOutput("Error submitting the code");
+      setVerdict("Submission Error");
+      setActiveConsoleTab("verdict");
+    }
+  };
+
+  const handleVerdictClass = () => {
+    switch (verdict) {
+      case "Correct Answer":
+        return "bg-green-500";
+      case "Wrong Answer":
+        return "bg-red-500";
+      case "Runtime Error":
+        return "bg-yellow-500";
+      case "Submission Error":
+        return "bg-gray-500";
+      default:
+        return "";
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
-    <Navbar className="sticky top-0 z-50 py-3 backdrop-blur-lg border-b border-neutral-700/80">
-      <Link
-        to="/"
-        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
-      >
-        <div className="flex items-center flex-shrink-0">
-          <img className="h-10 w-10 mr-2" src={logo} alt="Logo" />
-          <span className="text-xl tracking-tight">CodeCalorie</span>
+    <div className="flex flex-col md:flex-row p-4">
+      <div className="md:w-1/2">
+        <h1 className="text-2xl font-bold">{problem.title}</h1>
+        <p className="mt-4">{problem.description}</p>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Input Format</h2>
+          <p>{problem.input}</p>
         </div>
-      </Link>
-      <div className="flex gap-2 md:order-2">
-        <Button
-          className="w-12 h-10 hidden sm:inline"
-          color="orange"
-          pill
-          onClick={() => dispatch(toggleTheme())}
-        >
-          Toggle Theme
-        </Button>
-        {currentUser ? (
-          <Dropdown
-            arrowIcon={false}
-            inline
-            label={
-              <Avatar alt="user" img={currentUser.profilePicture} rounded />
-            }
-          >
-            <Dropdown.Header>
-              <span className="block text-sm">@{currentUser.username}</span>
-              <span className="block text-sm font-medium truncate">
-                {currentUser.email}
-              </span>
-            </Dropdown.Header>
-            <Link to={"/dashboard?tab=profile"}>
-              <Dropdown.Item>Profile</Dropdown.Item>
-            </Link>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
-          </Dropdown>
-        ) : (
-          <Link to="/sign-in">
-            <Button gradientDuoTone="pinkToOrange" outline>
-              Sign In
-            </Button>
-          </Link>
-        )}
-        <Navbar.Toggle />
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Output Format</h2>
+          <p>{problem.output}</p>
+        </div>
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Constraints</h2>
+          <p>{problem.constraints}</p>
+        </div>
       </div>
-      <Navbar.Collapse>
-        <Navbar.Link active={path === "/"} as={"div"}>
-          <Link to="/">Home</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === "/contests"} as={"div"}>
-          <Link to="/contests">Contests</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === "/search-problems"} as={"div"}>
-          <Link to="/search-problems">Problems</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === "/search"} as={"div"}>
-          <Link to="/search">Posts</Link>
-        </Navbar.Link>
-      </Navbar.Collapse>
-    </Navbar>
+      <div className="md:w-1/2 mt-4 md:mt-0 md:ml-4">
+        <AceEditor
+          mode="c_cpp"
+          theme="monokai"
+          name="editor"
+          editorProps={{ $blockScrolling: true }}
+          value={code}
+          onChange={setCode}
+          fontSize={14}
+          width="100%"
+          height="400px"
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+          }}
+        />
+        <div className="flex mt-4">
+          <button
+            onClick={handleRun}
+            className="mr-4 bg-black text-white py-2 px-4 rounded border border-white"
+          >
+            Run
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="mr-4 bg-orange-500 text-white py-2 px-4 rounded"
+          >
+            Submit
+          </button>
+        </div>
+        {isConsoleVisible && (
+          <div className="mt-4 p-4 bg-gray-800 text-white rounded">
+            {activeConsoleTab === "input" && (
+              <textarea
+                className="w-full p-2 bg-gray-800 text-white border rounded"
+                placeholder="Enter custom input"
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                rows={5}
+              />
+            )}
+            {activeConsoleTab === "output" && <pre>{output}</pre>}
+            {activeConsoleTab === "verdict" && (
+              <div className={`p-2 rounded ${handleVerdictClass()}`}>
+                {verdict}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   );
-}
+};
+
+export default ProblemPage;
