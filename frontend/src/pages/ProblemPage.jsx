@@ -94,6 +94,7 @@ int main() {
       setActiveConsoleTab("verdict");
     }
   };
+  
   const handleVerdictClass = () => {
     switch (verdict) {
       case "Correct Answer":
