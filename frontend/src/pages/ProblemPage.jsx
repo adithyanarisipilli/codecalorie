@@ -40,7 +40,7 @@ int main() {
 
   const handleRun = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/run", {
+      const response = await axios.post("http://localhost:3000/run", {
         language: "cpp",
         code,
         input: customInput,
@@ -63,13 +63,14 @@ int main() {
     }));
 
     try {
-      const { data } = await axios.post("http://localhost:5001/submit", {
+      const { data } = await axios.post("http://localhost:3000/submit", {
         language: "cpp",
         code,
         testCases,
       });
 
-      const comparisonResults = data.comparisionResults.comparisonResults;
+      const comparisonResults = data.comparisonResults;
+
 
       // Check each comparison result
       let allCorrect = true;

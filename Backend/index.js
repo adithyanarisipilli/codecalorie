@@ -11,6 +11,9 @@ import axios from "axios";
 import cors from "cors";
 import fs from "fs/promises";
 import Problem from "./models/problem.model.js";
+import { generateFile } from "./generateFile.cjs";
+import { generateInputFile } from "./generateInputFile.cjs";
+import { executeCpp } from "./executeCpp.cjs";
 
 dotenv.config();
 
@@ -42,45 +45,68 @@ app.post("/run", async (req, res) => {
   }
 
   try {
-    // Send request to the compiler server
-    const response = await axios.post("http://localhost:5000/run", {
-      language,
-      code,
-      input,
-    });
-    const { filePath, inputPath, output } = response.data;
-
+    const filePath = await generateFile(language, code);
+    const inputPath = await generateInputFile(input);
+    const output = await executeCpp(filePath, inputPath);
+    console.log(filePath, inputPath, output);
     res.json({ filePath, inputPath, output });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.post("/compare", async (req, res) => {
-  const { testCases } = req.body;
+app.post("/submit", async (req, res) => {
+  const { language = "cpp", code, testCases } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ success: false, error: "Empty code!" });
+  }
 
   try {
-    // Read the Pout file
-    const poutContent = await fs.readFile("Pout.txt", "utf8");
-    const results = JSON.parse(poutContent);
+    const rawResults = [];
 
-    // Compare the outputs
+    // Step 1: Execute each test case
+    for (let i = 0; i < testCases.length; i++) {
+      const { input } = testCases[i];
+
+      const filePath = await generateFile(language, code);
+      const inputPath = await generateInputFile(input);
+      const stdout = await executeCpp(filePath, inputPath);
+
+      const actualOutput = stdout.trim();
+
+      // Collect raw actual outputs only for now
+      rawResults.push({ actualOutput });
+    }
+
+    // Step 2: Write results to Pout.txt
+    await fs.writeFile("Pout.txt", JSON.stringify(rawResults, null, 2));
+
+    // Step 3: Read Pout.txt for comparison
+    const poutContent = await fs.readFile("Pout.txt", "utf8");
+    const parsedResults = JSON.parse(poutContent);
+
+    // Step 4: Compare actual vs expected
     const comparisonResults = testCases.map((testCase, index) => {
-      const result = results[index];
+      const result = parsedResults[index];
       const expectedOutput = testCase.output.trim();
       const actualOutput = result.actualOutput.trim();
       const verdict =
         actualOutput === expectedOutput ? "Correct Answer" : "Wrong Answer";
 
-      return { input: testCase.input, expectedOutput, actualOutput, verdict };
+      return {
+        input: testCase.input,
+        expectedOutput,
+        actualOutput,
+        verdict,
+      };
     });
 
-    // Print the comparison results before sending the response
+    // Log and return final verdicts
     console.log("Comparison Results:", comparisonResults);
-
     res.json({ success: true, comparisonResults });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
