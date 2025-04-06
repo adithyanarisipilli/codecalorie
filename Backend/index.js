@@ -29,7 +29,16 @@ mongoose
 const app = express();
 
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://www.codecalorie-by-adithya-narisipilli.tech",
+      "https://codecalorie-by-adithya-narisipilli.tech",
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
