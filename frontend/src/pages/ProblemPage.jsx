@@ -40,11 +40,14 @@ int main() {
 
   const handleRun = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/run", {
-        language: "cpp",
-        code,
-        input: customInput,
-      });
+      const response = await axios.post(
+        "https://codecalorie.onrender.com/run",
+        {
+          language: "cpp",
+          code,
+          input: customInput,
+        }
+      );
       setOutput(response.data.output);
       setVerdict(null); // Clear verdict on manual run
       setActiveConsoleTab("output");
@@ -63,11 +66,14 @@ int main() {
     }));
 
     try {
-      const { data } = await axios.post("http://localhost:3000/submit", {
-        language: "cpp",
-        code,
-        testCases,
-      });
+      const { data } = await axios.post(
+        "https://codecalorie.onrender.com/submit",
+        {
+          language: "cpp",
+          code,
+          testCases,
+        }
+      );
 
       const comparisonResults = data.comparisonResults;
 
