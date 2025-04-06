@@ -13,12 +13,9 @@ export default function ContactUs() {
             Contact Us
           </h1>
           <div className="text-md text-gray-500 flex flex-col gap-6">
-            <p>you can contact with our founder directly via linkedin.</p>
+            <p>you can contact our founder directly via linkedin.</p>
 
             <p>He usually get back within 24-72 hours.</p>
-
-            
-            
           </div>
 
           {/* Add margin-top to create space between the text and CallToAction */}
