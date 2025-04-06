@@ -71,7 +71,6 @@ int main() {
 
       const comparisonResults = data.comparisonResults;
 
-
       // Check each comparison result
       let allCorrect = true;
       for (const result of comparisonResults) {
