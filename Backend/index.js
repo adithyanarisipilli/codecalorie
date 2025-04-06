@@ -14,6 +14,7 @@ import Problem from "./models/problem.model.js";
 import { generateFile } from "./generateFile.cjs";
 import { generateInputFile } from "./generateInputFile.cjs";
 import { executeCpp } from "./executeCpp.cjs";
+import path from "path";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ mongoose
     console.log(err);
   });
 
+const __dirname = path.resolve();
 const app = express();
 
 app.use(cookieParser());
@@ -42,8 +44,11 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
 app.get("/", (req, res) => {
-  res.json({ online: "compiler" });
+  res.sendFile(path.join(__dirname, "/frontend/dist", "index.html"));
 });
 
 app.post("/run", async (req, res) => {
@@ -119,15 +124,19 @@ app.post("/submit", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000!");
-});
+
+
 
 app.use("/backend/user", userRoutes);
 app.use("/backend/auth", authRoutes);
 app.use("/backend/post", postRoutes);
 app.use("/backend/problem", problemRoutes);
 app.use("/backend/comment", commentRoutes);
+
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -137,4 +146,8 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+app.listen(3000, () => {
+  console.log("Server is running on port 3000!");
 });
